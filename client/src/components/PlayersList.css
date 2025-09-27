@@ -1,0 +1,209 @@
+.players-list {
+    background: rgba(255, 255, 255, 0.1);
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    border-radius: 15px;
+    padding: 25px;
+    height: fit-content;
+    max-height: 400px;
+    overflow-y: auto;
+}
+
+.players-list h3 {
+    font-size: 1.3rem;
+    margin-bottom: 20px;
+    color: #4cc9f0;
+    font-weight: 600;
+    border-bottom: 2px solid rgba(76, 201, 240, 0.3);
+    padding-bottom: 10px;
+}
+
+.players-container {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.player-item {
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 10px;
+    padding: 15px;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    transition: all 0.3s ease;
+    animation: slideIn 0.3s ease-out;
+}
+
+.player-item:hover {
+    background: rgba(255, 255, 255, 0.1);
+    transform: translateX(5px);
+    border-color: rgba(76, 201, 240, 0.3);
+}
+
+.player-info {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 8px;
+}
+
+.player-name {
+    font-weight: 600;
+    color: white;
+    font-size: 1rem;
+}
+
+.player-balance {
+    color: #4ade80;
+    font-weight: 600;
+    font-size: 0.9rem;
+}
+
+.player-bet {
+    background: linear-gradient(135deg, rgba(76, 201, 240, 0.2), rgba(247, 37, 133, 0.2));
+    padding: 8px 12px;
+    border-radius: 6px;
+    font-size: 0.85rem;
+    border-left: 3px solid #4cc9f0;
+}
+
+.player-bet strong {
+    color: #4ade80;
+}
+
+/* Estados de jugador */
+.player-item:has(.player-bet) {
+    border-left: 3px solid #4cc9f0;
+}
+
+.player-item.me {
+    background: linear-gradient(135deg, rgba(76, 201, 240, 0.15), transparent);
+    border: 1px solid rgba(76, 201, 240, 0.5);
+}
+
+/* Animaciones */
+@keyframes slideIn {
+    from {
+        opacity: 0;
+        transform: translateX(-20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateX(0);
+    }
+}
+
+@keyframes pulseGlow {
+    0%, 100% {
+        box-shadow: 0 0 5px rgba(76, 201, 240, 0.5);
+    }
+    50% {
+        box-shadow: 0 0 20px rgba(76, 201, 240, 0.8);
+    }
+}
+
+.player-item.new-bet {
+    animation: pulseGlow 1s ease-in-out;
+}
+
+/* Scroll personalizado */
+.players-list::-webkit-scrollbar {
+    width: 6px;
+}
+
+.players-list::-webkit-scrollbar-track {
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 3px;
+}
+
+.players-list::-webkit-scrollbar-thumb {
+    background: #4cc9f0;
+    border-radius: 3px;
+}
+
+.players-list::-webkit-scrollbar-thumb:hover {
+    background: #3aa8d4;
+}
+
+/* Indicador de jugadores en línea */
+.players-list::before {
+    content: '';
+    display: inline-block;
+    width: 8px;
+    height: 8px;
+    background: #4ade80;
+    border-radius: 50%;
+    margin-right: 10px;
+    animation: pulse 2s infinite;
+}
+
+/* Estados vacíos */
+.players-list:empty::after {
+    content: 'No hay jugadores conectados';
+    display: block;
+    text-align: center;
+    color: rgba(255, 255, 255, 0.5);
+    font-style: italic;
+    padding: 20px;
+}
+
+/* Estado sin jugadores */
+.no-players {
+    text-align: center;
+    color: rgba(255, 255, 255, 0.6);
+    font-style: italic;
+    padding: 20px;
+    border: 2px dashed rgba(255, 255, 255, 0.2);
+    border-radius: 10px;
+    margin-top: 10px;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .players-list {
+        max-height: 300px;
+        padding: 20px;
+    }
+    
+    .player-item {
+        padding: 12px;
+    }
+    
+    .player-info {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 5px;
+    }
+    
+    .player-balance {
+        align-self: flex-end;
+        margin-top: -25px;
+    }
+}
+
+/* Efectos de gradiente en borde */
+.players-list {
+    position: relative;
+}
+
+.players-list::after {
+    content: '';
+    position: absolute;
+    top: -2px;
+    left: -2px;
+    right: -2px;
+    bottom: -2px;
+    background: linear-gradient(45deg, #4cc9f0, #f72585, #4cc9f0);
+    border-radius: 17px;
+    z-index: -1;
+    opacity: 0.3;
+    animation: rotateGradient 10s linear infinite;
+}
+
+@keyframes rotateGradient {
+    0% {
+        filter: hue-rotate(0deg);
+    }
+    100% {
+        filter: hue-rotate(360deg);
+    }
+}

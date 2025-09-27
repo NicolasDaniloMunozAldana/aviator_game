@@ -1,0 +1,84 @@
+.game-history {
+    background: rgba(255, 255, 255, 0.1);
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    border-radius: 15px;
+    padding: 25px;
+    height: fit-content;
+    max-height: 400px;
+    overflow-y: auto;
+}
+
+.game-history h3 {
+    font-size: 1.3rem;
+    margin-bottom: 20px;
+    color: #4cc9f0;
+    font-weight: 600;
+    border-bottom: 2px solid rgba(76, 201, 240, 0.3);
+    padding-bottom: 10px;
+}
+
+.history-list {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.history-item {
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 8px;
+    padding: 12px 15px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    transition: all 0.3s ease;
+    border-left: 3px solid transparent;
+}
+
+.history-item:hover {
+    background: rgba(255, 255, 255, 0.1);
+    transform: translateX(3px);
+}
+
+.history-item:nth-child(odd) {
+    background: rgba(255, 255, 255, 0.03);
+}
+
+.round-number {
+    color: rgba(255, 255, 255, 0.7);
+    font-size: 0.85rem;
+}
+
+.crash-multiplier {
+    font-weight: 600;
+    color: #4ade80;
+}
+
+.crash-multiplier.high {
+    color: #f72585;
+    animation: glow 2s infinite;
+}
+
+.player-count {
+    color: rgba(255, 255, 255, 0.6);
+    font-size: 0.8rem;
+}
+
+.no-history {
+    text-align: center;
+    color: rgba(255, 255, 255, 0.6);
+    font-style: italic;
+    padding: 20px;
+    border: 2px dashed rgba(255, 255, 255, 0.2);
+    border-radius: 10px;
+    margin-top: 10px;
+}
+
+@keyframes glow {
+    0%, 100% {
+        text-shadow: 0 0 5px currentColor;
+    }
+    50% {
+        text-shadow: 0 0 20px currentColor;
+    }
+}

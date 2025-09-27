@@ -1,0 +1,72 @@
+# ========================
+# DEPENDENCIAS
+# ========================
+client/node_modules/
+server/node_modules/
+node_modules/
+
+# Lockfiles
+client/package-lock.json
+client/yarn.lock
+client/pnpm-lock.yaml
+server/package-lock.json
+server/yarn.lock
+server/pnpm-lock.yaml
+
+# ========================
+# ARCHIVOS DE ENTORNO
+# ========================
+.env
+.env.local
+.env.*.local
+client/.env
+server/.env
+
+# ========================
+# LOGS
+# ========================
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+logs/
+*.log
+
+# ========================
+# COMPILACIÓN / BUILD
+# ========================
+client/dist/
+client/build/
+client/.cache/
+client/.vite/
+server/dist/
+server/build/
+
+# Next.js (si en algún momento lo usas)
+.next/
+out/
+
+# ========================
+# COBERTURA DE TESTS
+# ========================
+coverage/
+.nyc_output/
+
+# ========================
+# ARCHIVOS DEL SISTEMA
+# ========================
+.DS_Store
+Thumbs.db
+
+# ========================
+# EDITORES / IDE
+# ========================
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# ========================
+# OTROS
+# ========================
+*.tgz

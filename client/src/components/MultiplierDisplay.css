@@ -1,0 +1,35 @@
+.multiplier-display {
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 15px;
+  padding: 30px;
+  text-align: center;
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.multiplier-value {
+  font-size: 4rem;
+  font-weight: bold;
+  margin: 20px 0;
+  text-shadow: 0 0 20px currentColor;
+}
+
+.game-state {
+  font-size: 1.2rem;
+  margin-bottom: 20px;
+  color: #ccc;
+}
+
+.multiplier-bar {
+  width: 100%;
+  height: 10px;
+  background: rgba(255, 255, 255, 0.2);
+  border-radius: 5px;
+  overflow: hidden;
+}
+
+.multiplier-progress {
+  height: 100%;
+  background: linear-gradient(90deg, #4cc9f0, #f72585);
+  transition: width 0.1s ease;
+}

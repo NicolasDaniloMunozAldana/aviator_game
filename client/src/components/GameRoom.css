@@ -1,0 +1,124 @@
+.game-room {
+    display: grid;
+    grid-template-columns: 2fr 1fr;
+    gap: 30px;
+    padding: 30px;
+    max-width: 1400px;
+    margin: 0 auto;
+    min-height: calc(100vh - 120px);
+}
+
+.game-main {
+    display: flex;
+    flex-direction: column;
+    gap: 25px;
+}
+
+.game-sidebar {
+    display: flex;
+    flex-direction: column;
+    gap: 25px;
+    height: fit-content;
+    position: sticky;
+    top: 30px;
+}
+
+/* Estado de conexión */
+.connection-status {
+    background: rgba(239, 68, 68, 0.2);
+    color: #ef4444;
+    padding: 15px;
+    text-align: center;
+    border-radius: 10px;
+    margin-bottom: 20px;
+    border: 1px solid rgba(239, 68, 68, 0.5);
+    animation: pulse 2s infinite;
+}
+
+.connection-status p {
+    margin: 0;
+    font-weight: 600;
+}
+
+/* Responsive */
+@media (max-width: 1024px) {
+    .game-room {
+        grid-template-columns: 1fr;
+        gap: 20px;
+        padding: 20px;
+    }
+    
+    .game-sidebar {
+        position: static;
+        order: -1;
+    }
+}
+
+@media (max-width: 768px) {
+    .game-room {
+        padding: 15px;
+        gap: 15px;
+    }
+}
+
+/* Animaciones */
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.game-room > * {
+    animation: fadeIn 0.5s ease-out;
+}
+
+/* Estados del juego */
+.game-waiting {
+    border-left: 4px solid #4cc9f0;
+}
+
+.game-countdown {
+    border-left: 4px solid #f72585;
+    animation: pulse 1s infinite;
+}
+
+.game-in-progress {
+    border-left: 4px solid #4ade80;
+}
+
+.game-crashed {
+    border-left: 4px solid #ef4444;
+}
+
+@keyframes pulse {
+    0%, 100% {
+        opacity: 1;
+    }
+    50% {
+        opacity: 0.7;
+    }
+}
+
+/* Scroll personalizado */
+.game-sidebar::-webkit-scrollbar {
+    width: 6px;
+}
+
+.game-sidebar::-webkit-scrollbar-track {
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 3px;
+}
+
+.game-sidebar::-webkit-scrollbar-thumb {
+    background: #4cc9f0;
+    border-radius: 3px;
+}
+
+.game-sidebar::-webkit-scrollbar-thumb:hover {
+    background: #3aa8d4;
+}

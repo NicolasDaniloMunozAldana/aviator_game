@@ -1,0 +1,149 @@
+.betting-panel {
+    background: rgba(255, 255, 255, 0.1);
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    border-radius: 15px;
+    padding: 25px;
+}
+
+.player-info {
+    margin-bottom: 20px;
+    padding-bottom: 15px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.player-info h3 {
+    color: #4cc9f0;
+    margin-bottom: 5px;
+    font-size: 1.2rem;
+}
+
+.player-info p {
+    color: rgba(255, 255, 255, 0.8);
+    font-size: 1rem;
+}
+
+.bet-controls {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+.bet-amount {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.bet-amount label {
+    color: rgba(255, 255, 255, 0.8);
+    font-size: 0.9rem;
+}
+
+.bet-amount input {
+    padding: 12px 15px;
+    border: none;
+    border-radius: 8px;
+    background: rgba(255, 255, 255, 0.15);
+    color: white;
+    font-size: 1rem;
+    border: 2px solid transparent;
+    transition: all 0.3s ease;
+}
+
+.bet-amount input:focus {
+    outline: none;
+    border-color: #4cc9f0;
+    background: rgba(255, 255, 255, 0.2);
+}
+
+.quick-bets {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+}
+
+.quick-bet-btn {
+    padding: 8px 15px;
+    border: 1px solid rgba(76, 201, 240, 0.5);
+    background: rgba(76, 201, 240, 0.1);
+    color: #4cc9f0;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    font-size: 0.9rem;
+}
+
+.quick-bet-btn:hover {
+    background: rgba(76, 201, 240, 0.2);
+    transform: translateY(-2px);
+}
+
+.bet-btn, .cashout-btn {
+    padding: 15px;
+    border: none;
+    border-radius: 10px;
+    font-size: 1.1rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+.bet-btn.active {
+    background: linear-gradient(135deg, #4cc9f0, #3aa8d4);
+    color: white;
+}
+
+.bet-btn.disabled {
+    background: rgba(255, 255, 255, 0.1);
+    color: rgba(255, 255, 255, 0.5);
+    cursor: not-allowed;
+}
+
+.cashout-btn.active {
+    background: linear-gradient(135deg, #4ade80, #22c55e);
+    color: white;
+    animation: pulse 1s infinite;
+}
+
+.cashout-btn.disabled {
+    background: rgba(255, 255, 255, 0.1);
+    color: rgba(255, 255, 255, 0.5);
+    cursor: not-allowed;
+}
+
+.cashout-success {
+    background: linear-gradient(135deg, rgba(74, 222, 128, 0.2), rgba(34, 197, 94, 0.2));
+    border: 1px solid #4ade80;
+    color: #4ade80;
+    padding: 15px;
+    border-radius: 10px;
+    text-align: center;
+    font-weight: 600;
+    margin-top: 15px;
+    animation: slideIn 0.5s ease-out;
+}
+
+@keyframes pulse {
+    0%, 100% {
+        transform: scale(1);
+        opacity: 1;
+    }
+    50% {
+        transform: scale(1.05);
+        opacity: 0.8;
+    }
+}
+
+@keyframes slideIn {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
