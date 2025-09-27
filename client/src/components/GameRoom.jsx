@@ -25,7 +25,7 @@ const GameRoom = () => {
       <div className="game-main">
         <MultiplierDisplay 
           multiplier={gameState.currentMultiplier || 1.00}
-          gameState={gameState.currentState || 'waiting'}
+          gameState={gameState}
           timeRemaining={gameState.timeRemaining || 0}
         />
         

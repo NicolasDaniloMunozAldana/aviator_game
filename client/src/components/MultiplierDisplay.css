@@ -1,35 +1,109 @@
 .multiplier-display {
-  background: rgba(255, 255, 255, 0.1);
-  border-radius: 15px;
-  padding: 30px;
+  background: linear-gradient(135deg, rgba(30, 41, 59, 0.9), rgba(51, 65, 85, 0.9));
+  border-radius: 20px;
+  padding: 40px;
   text-align: center;
-  backdrop-filter: blur(10px);
-  border: 1px solid rgba(255, 255, 255, 0.2);
+  backdrop-filter: blur(15px);
+  border: 2px solid rgba(59, 130, 246, 0.3);
+  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+  position: relative;
+  overflow: hidden;
+  min-height: 300px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  transition: all 0.3s ease;
+}
+
+.multiplier-display.rising {
+  animation: pulse 2s infinite;
+  border-color: rgba(34, 197, 94, 0.5);
+}
+
+.multiplier-display.crashed {
+  animation: shake 0.5s ease-in-out;
+  border-color: rgba(239, 68, 68, 0.8);
+}
+
+@keyframes pulse {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.02); }
+}
+
+@keyframes shake {
+  0%, 100% { transform: translateX(0); }
+  10%, 30%, 50%, 70%, 90% { transform: translateX(-5px); }
+  20%, 40%, 60%, 80% { transform: translateX(5px); }
+}
+
+.flight-info {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+}
+
+.airplane-icon {
+  font-size: 2rem;
+  animation: fly 3s ease-in-out infinite;
+}
+
+@keyframes fly {
+  0%, 100% { transform: translateY(0px); }
+  50% { transform: translateY(-10px); }
+}
+
+.round-info {
+  color: rgba(156, 163, 175, 0.8);
+  font-size: 0.9rem;
+  font-weight: 600;
 }
 
 .multiplier-value {
-  font-size: 4rem;
-  font-weight: bold;
-  margin: 20px 0;
-  text-shadow: 0 0 20px currentColor;
+  font-size: 5rem;
+  font-weight: 900;
+  margin: 30px 0;
+  text-shadow: 0 0 30px currentColor;
+  font-family: 'Courier New', monospace;
+  letter-spacing: -2px;
+  transition: all 0.1s ease;
 }
 
 .game-state {
-  font-size: 1.2rem;
-  margin-bottom: 20px;
-  color: #ccc;
+  font-size: 1.3rem;
+  margin-bottom: 25px;
+  color: #e2e8f0;
+  font-weight: 600;
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
 }
 
 .multiplier-bar {
   width: 100%;
-  height: 10px;
-  background: rgba(255, 255, 255, 0.2);
-  border-radius: 5px;
+  height: 15px;
+  background: rgba(30, 41, 59, 0.8);
+  border-radius: 10px;
   overflow: hidden;
+  border: 1px solid rgba(59, 130, 246, 0.3);
+  margin-top: 20px;
 }
 
 .multiplier-progress {
   height: 100%;
-  background: linear-gradient(90deg, #4cc9f0, #f72585);
-  transition: width 0.1s ease;
+  background: linear-gradient(90deg, #10b981, #34d399, #fbbf24, #f59e0b, #ef4444);
+  transition: width 0.05s linear;
+  border-radius: 10px;
+  box-shadow: 0 0 10px rgba(16, 185, 129, 0.5);
+}
+
+.waiting-message {
+  margin-top: 20px;
+  color: rgba(156, 163, 175, 0.9);
+  font-size: 1rem;
+  font-style: italic;
+  animation: fadeInOut 2s ease-in-out infinite;
+}
+
+@keyframes fadeInOut {
+  0%, 100% { opacity: 0.7; }
+  50% { opacity: 1; }
 }

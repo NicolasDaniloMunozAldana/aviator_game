@@ -12,6 +12,7 @@ export class GameEngine extends EventEmitter {
         this.roundInterval = null;
         this.multiplierInterval = null;
         this.countdownInterval = null;
+        this.waitingInterval = null;
         this.isRunning = false;
     }
 
@@ -28,13 +29,24 @@ export class GameEngine extends EventEmitter {
      */
     startWaitingPhase() {
         this.gameState.currentState = GAME_STATES.WAITING;
-        this.gameState.timeRemaining = GAME_CONFIG.ROUND_DURATION / 1000;
+        this.gameState.timeRemaining = GAME_CONFIG.WAITING_DURATION / 1000;
 
         this.emit('gameStateUpdate', this.gameState.toJSON());
 
-        setTimeout(() => {
-            this.startCountdownPhase();
-        }, GAME_CONFIG.ROUND_DURATION);
+        // Countdown durante la fase de waiting
+        let waitingTime = GAME_CONFIG.WAITING_DURATION / 1000;
+        this.waitingInterval = setInterval(() => {
+            waitingTime--;
+            this.gameState.timeRemaining = waitingTime;
+            
+            this.emit('gameStateUpdate', this.gameState.toJSON());
+            this.emit('waitingCountdown', { timeRemaining: waitingTime });
+
+            if (waitingTime <= 0) {
+                clearInterval(this.waitingInterval);
+                this.startCountdownPhase();
+            }
+        }, 1000);
     }
 
     /**
@@ -110,12 +122,12 @@ export class GameEngine extends EventEmitter {
             results: roundResults
         });
 
-        // Preparar siguiente ronda después de 3 segundos
+        // Preparar siguiente ronda después del delay configurado
         setTimeout(() => {
             this.gameState.roundNumber++;
             this.gameState.resetForNewRound();
             this.startWaitingPhase();
-        }, 3000);
+        }, GAME_CONFIG.CRASH_DELAY);
     }
 
     /**
@@ -123,13 +135,23 @@ export class GameEngine extends EventEmitter {
      */
     placeBet(playerId, betData) {
         try {
+            const player = this.gameState.players.get(playerId);
+            if (!player) {
+                return { success: false, error: 'Jugador no encontrado' };
+            }
+
             const newBalance = this.gameState.placeBet(playerId, betData);
             
+            // Emit bet placed with player info
             this.emit('betPlaced', {
                 playerId,
-                betData,
+                betData: {
+                    ...betData,
+                    playerName: player.username
+                },
                 newBalance,
-                roundNumber: this.gameState.roundNumber
+                roundNumber: this.gameState.roundNumber,
+                gameState: this.gameState.toJSON()
             });
 
             return { success: true, newBalance };
@@ -144,12 +166,19 @@ export class GameEngine extends EventEmitter {
      */
     cashOut(playerId) {
         try {
+            const player = this.gameState.players.get(playerId);
+            if (!player) {
+                return { success: false, error: 'Jugador no encontrado' };
+            }
+
             const result = this.gameState.cashOut(playerId);
             
             this.emit('cashOut', {
                 playerId,
+                playerName: player.username,
                 ...result,
-                roundNumber: this.gameState.roundNumber
+                roundNumber: this.gameState.roundNumber,
+                gameState: this.gameState.toJSON()
             });
 
             return { success: true, ...result };
@@ -163,10 +192,13 @@ export class GameEngine extends EventEmitter {
      */
     playerJoin(playerId, playerData) {
         this.gameState.addPlayer(playerId, playerData);
+        
+        // Emit player joined with updated game state
         this.emit('playerJoined', {
             playerId,
             playerData: this.gameState.players.get(playerId),
-            playerCount: this.gameState.players.size
+            playerCount: this.gameState.players.size,
+            gameState: this.gameState.toJSON()
         });
     }
 
@@ -206,6 +238,7 @@ export class GameEngine extends EventEmitter {
         clearInterval(this.roundInterval);
         clearInterval(this.multiplierInterval);
         clearInterval(this.countdownInterval);
+        clearInterval(this.waitingInterval);
         this.isRunning = false;
     }
 

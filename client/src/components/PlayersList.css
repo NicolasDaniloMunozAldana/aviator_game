@@ -1,21 +1,55 @@
 .players-list {
-    background: rgba(255, 255, 255, 0.1);
-    backdrop-filter: blur(10px);
-    border: 1px solid rgba(255, 255, 255, 0.2);
-    border-radius: 15px;
+    background: linear-gradient(135deg, rgba(30, 41, 59, 0.9), rgba(51, 65, 85, 0.9));
+    backdrop-filter: blur(15px);
+    border: 2px solid rgba(59, 130, 246, 0.3);
+    border-radius: 20px;
     padding: 25px;
     height: fit-content;
-    max-height: 400px;
+    max-height: 500px;
     overflow-y: auto;
+    box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
 }
 
 .players-list h3 {
-    font-size: 1.3rem;
+    font-size: 1.4rem;
     margin-bottom: 20px;
-    color: #4cc9f0;
+    color: #3b82f6;
+    font-weight: 700;
+    border-bottom: 2px solid rgba(59, 130, 246, 0.3);
+    padding-bottom: 15px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.game-stats {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 15px;
+    margin-bottom: 20px;
+    padding: 15px;
+    background: rgba(15, 23, 42, 0.6);
+    border-radius: 12px;
+    border: 1px solid rgba(59, 130, 246, 0.2);
+}
+
+.stat {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 5px;
+}
+
+.stat-label {
+    color: rgba(156, 163, 175, 0.8);
+    font-size: 0.8rem;
     font-weight: 600;
-    border-bottom: 2px solid rgba(76, 201, 240, 0.3);
-    padding-bottom: 10px;
+}
+
+.stat-value {
+    color: #10b981;
+    font-size: 1.1rem;
+    font-weight: 700;
 }
 
 .players-container {
@@ -25,59 +59,180 @@
 }
 
 .player-item {
-    background: rgba(255, 255, 255, 0.05);
-    border-radius: 10px;
-    padding: 15px;
-    border: 1px solid rgba(255, 255, 255, 0.1);
+    background: rgba(15, 23, 42, 0.7);
+    border-radius: 15px;
+    padding: 18px;
+    border: 2px solid rgba(71, 85, 105, 0.3);
     transition: all 0.3s ease;
-    animation: slideIn 0.3s ease-out;
+    animation: slideIn 0.4s ease-out;
+    position: relative;
+    overflow: hidden;
+}
+
+.player-item.waiting {
+    border-color: rgba(156, 163, 175, 0.3);
+}
+
+.player-item.betting {
+    border-color: rgba(59, 130, 246, 0.5);
+    background: rgba(59, 130, 246, 0.05);
+}
+
+.player-item.flying {
+    border-color: rgba(245, 158, 11, 0.5);
+    background: rgba(245, 158, 11, 0.05);
+    animation: flyingPulse 1.5s infinite;
+}
+
+.player-item.cashed-out {
+    border-color: rgba(16, 185, 129, 0.5);
+    background: rgba(16, 185, 129, 0.05);
+}
+
+.player-item.lost {
+    border-color: rgba(239, 68, 68, 0.5);
+    background: rgba(239, 68, 68, 0.05);
 }
 
 .player-item:hover {
-    background: rgba(255, 255, 255, 0.1);
+    background: rgba(15, 23, 42, 0.9);
     transform: translateX(5px);
-    border-color: rgba(76, 201, 240, 0.3);
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+}
+
+.player-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 12px;
 }
 
 .player-info {
     display: flex;
-    justify-content: space-between;
     align-items: center;
-    margin-bottom: 8px;
+    gap: 10px;
+}
+
+.player-avatar {
+    font-size: 1.2rem;
 }
 
 .player-name {
-    font-weight: 600;
+    font-weight: 700;
     color: white;
     font-size: 1rem;
 }
 
 .player-balance {
-    color: #4ade80;
+    color: #10b981;
+    font-weight: 700;
+    font-size: 0.95rem;
+    background: rgba(16, 185, 129, 0.1);
+    padding: 4px 8px;
+    border-radius: 6px;
+}
+
+.player-status {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 10px;
+}
+
+.status-icon {
+    font-size: 1.1rem;
+}
+
+.status-text {
+    color: rgba(255, 255, 255, 0.9);
     font-weight: 600;
+    flex: 1;
+}
+
+.winnings {
+    color: #10b981;
+    font-weight: 700;
+    background: rgba(16, 185, 129, 0.2);
+    padding: 2px 8px;
+    border-radius: 6px;
+    font-size: 0.85rem;
+}
+
+.potential {
+    color: #fbbf24;
+    font-weight: 600;
+    font-size: 0.85rem;
+    font-style: italic;
+}
+
+.bet-details {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: rgba(59, 130, 246, 0.1);
+    padding: 10px;
+    border-radius: 8px;
+    border-left: 3px solid #3b82f6;
+}
+
+.bet-amount {
+    font-size: 0.9rem;
+    color: rgba(255, 255, 255, 0.8);
+}
+
+.bet-amount strong {
+    color: #3b82f6;
+}
+
+.current-multiplier {
+    color: #fbbf24;
+    font-weight: 700;
     font-size: 0.9rem;
 }
 
-.player-bet {
-    background: linear-gradient(135deg, rgba(76, 201, 240, 0.2), rgba(247, 37, 133, 0.2));
-    padding: 8px 12px;
-    border-radius: 6px;
-    font-size: 0.85rem;
-    border-left: 3px solid #4cc9f0;
+.no-players {
+    text-align: center;
+    color: rgba(156, 163, 175, 0.8);
+    padding: 40px 20px;
 }
 
-.player-bet strong {
-    color: #4ade80;
+.empty-room-icon {
+    font-size: 3rem;
+    margin-bottom: 15px;
+    opacity: 0.6;
 }
 
-/* Estados de jugador */
-.player-item:has(.player-bet) {
-    border-left: 3px solid #4cc9f0;
+.no-players p {
+    font-size: 1.2rem;
+    font-weight: 600;
+    margin-bottom: 5px;
+    color: rgba(255, 255, 255, 0.7);
 }
 
-.player-item.me {
-    background: linear-gradient(135deg, rgba(76, 201, 240, 0.15), transparent);
-    border: 1px solid rgba(76, 201, 240, 0.5);
+.no-players small {
+    font-size: 0.9rem;
+    color: rgba(156, 163, 175, 0.6);
+}
+
+.no-bets {
+    text-align: center;
+    padding: 20px;
+    color: #60a5fa;
+    font-weight: 600;
+    background: rgba(59, 130, 246, 0.1);
+    border-radius: 10px;
+    border: 1px dashed rgba(59, 130, 246, 0.3);
+    margin-top: 15px;
+}
+
+/* Animaciones */
+@keyframes flyingPulse {
+    0%, 100% {
+        box-shadow: 0 0 10px rgba(245, 158, 11, 0.3);
+    }
+    50% {
+        box-shadow: 0 0 20px rgba(245, 158, 11, 0.6);
+    }
 }
 
 /* Animaciones */

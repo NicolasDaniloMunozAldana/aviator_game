@@ -34,7 +34,11 @@ export class GameService {
         });
 
         this.gameEngine.on('roundComplete', (roundData) => {
-            this.emitToSockets('round_complete', roundData);
+            this.emitToSockets(SOCKET_EVENTS.ROUND_COMPLETE, roundData);
+        });
+
+        this.gameEngine.on('waitingCountdown', (data) => {
+            this.emitToSockets(SOCKET_EVENTS.WAITING_COUNTDOWN, data);
         });
     }
 

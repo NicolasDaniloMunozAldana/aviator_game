@@ -44,14 +44,20 @@ export class GameState {
             throw new Error('Saldo insuficiente');
         }
 
+        if (this.bets.has(playerId)) {
+            throw new Error('Ya tienes una apuesta activa en esta ronda');
+        }
+
         player.balance -= betData.amount;
 
         this.bets.set(playerId, {
             playerId,
+            playerName: player.username,
             amount: betData.amount,
             placedAt: new Date(),
             multiplier: null,
-            won: false
+            won: false,
+            cashedOut: false
         });
 
         return player.balance;
@@ -91,10 +97,16 @@ export class GameState {
     }
 
     getActiveBets() {
-        return Array.from(this.bets.entries()).map(([playerId, bet]) => ({
-            ...bet,
-            player: this.players.get(playerId)
-        }));
+        return Array.from(this.bets.entries()).map(([playerId, bet]) => {
+            const player = this.players.get(playerId);
+            const cashOut = this.cashOuts.get(playerId);
+            return {
+                ...bet,
+                player: player,
+                hasCashedOut: !!cashOut,
+                cashOutMultiplier: cashOut?.cashOutMultiplier || null
+            };
+        });
     }
 
 
@@ -157,7 +169,8 @@ export class GameState {
             activeBets: this.getActiveBets(),
             roundNumber: this.roundNumber,
             timeRemaining: this.timeRemaining,
-            playerCount: this.players.size
+            playerCount: this.players.size,
+            cashOuts: Array.from(this.cashOuts.values())
         };
     }
 }

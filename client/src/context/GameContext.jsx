@@ -19,7 +19,9 @@ export const GameProvider = ({ children }) => {
         players: [],
         activeBets: [],
         timeRemaining: 0,
-        roundNumber: 0
+        roundNumber: 0,
+        playerCount: 0,
+        cashOuts: []
     });
 
     const [player, setPlayer] = useState({
@@ -60,6 +62,25 @@ export const GameProvider = ({ children }) => {
                 ...prev,
                 ...state
             }));
+            
+            // Actualizar si tengo apuesta activa
+            if (state.activeBets && socket.id) {
+                const myBet = state.activeBets.find(bet => bet.playerId === socket.id);
+                if (myBet) {
+                    setPlayer(prev => ({
+                        ...prev,
+                        hasBet: true,
+                        hasCashedOut: myBet.hasCashedOut || false
+                    }));
+                } else if (state.currentState === 'waiting') {
+                    // Reset bet status in new round
+                    setPlayer(prev => ({
+                        ...prev,
+                        hasBet: false,
+                        hasCashedOut: false
+                    }));
+                }
+            }
         });
 
         // Actualización del multiplicador en tiempo real
@@ -74,13 +95,12 @@ export const GameProvider = ({ children }) => {
         // Cuando un jugador apuesta
         socket.on('player_bet', (betData) => {
             console.log('Apuesta realizada:', betData);
-            // Si es mi apuesta, actualizar mi estado
-            if (betData.playerId === socket.id) {
-                setPlayer(prev => ({
+            
+            // Actualizar estado del juego si viene incluido
+            if (betData.gameState) {
+                setGameState(prev => ({
                     ...prev,
-                    balance: betData.newBalance,
-                    hasBet: true,
-                    myBets: [...prev.myBets, betData]
+                    ...betData.gameState
                 }));
             }
         });
@@ -102,11 +122,12 @@ export const GameProvider = ({ children }) => {
         // Cuando un jugador retira
         socket.on('player_cash_out', (cashOutData) => {
             console.log('Jugador retiró:', cashOutData);
-            if (cashOutData.playerId === socket.id) {
-                setPlayer(prev => ({
+            
+            // Actualizar estado del juego si viene incluido
+            if (cashOutData.gameState) {
+                setGameState(prev => ({
                     ...prev,
-                    balance: cashOutData.newBalance,
-                    hasCashedOut: true
+                    ...cashOutData.gameState
                 }));
             }
         });
@@ -134,6 +155,14 @@ export const GameProvider = ({ children }) => {
         // Jugador se une
         socket.on('player_joined', (playerData) => {
             console.log('Jugador se unió:', playerData);
+            
+            // Actualizar estado del juego si viene incluido
+            if (playerData.gameState) {
+                setGameState(prev => ({
+                    ...prev,
+                    ...playerData.gameState
+                }));
+            }
         });
 
         // Ronda completada
@@ -151,6 +180,15 @@ export const GameProvider = ({ children }) => {
             setGameHistory(prev => [roundData, ...prev.slice(0, 9)]);
         });
 
+        // Countdown durante waiting
+        socket.on('waiting_countdown', (data) => {
+            console.log('Waiting countdown:', data);
+            setGameState(prev => ({
+                ...prev,
+                timeRemaining: data.timeRemaining
+            }));
+        });
+
         return () => {
             socket.off('connect');
             socket.off('disconnect');
@@ -163,6 +201,7 @@ export const GameProvider = ({ children }) => {
             socket.off('game_history');
             socket.off('player_joined');
             socket.off('round_complete');
+            socket.off('waiting_countdown');
         };
     }, [socket]);
 

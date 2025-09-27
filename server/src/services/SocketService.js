@@ -34,22 +34,39 @@ export class SocketService {
 
             // Manejar eventos del cliente
             socket.on('player_join', (playerData) => {
+                console.log('Jugador se une:', playerData);
                 gameService.playerJoin(socket.id, playerData);
+                // Enviar estado actualizado inmediatamente
+                socket.emit(SOCKET_EVENTS.GAME_STATE_UPDATE, gameService.getGameState());
             });
 
             socket.on('place_bet', (betData) => {
+                console.log('Apuesta recibida:', betData);
                 const result = gameService.placeBet(socket.id, betData);
                 socket.emit('bet_result', result);
+                
+                // Si la apuesta fue exitosa, emitir actualización a todos
+                if (result.success) {
+                    this.broadcast(SOCKET_EVENTS.GAME_STATE_UPDATE, gameService.getGameState());
+                }
             });
 
             socket.on('cash_out', () => {
+                console.log('Retiro solicitado por:', socket.id);
                 const result = gameService.cashOut(socket.id);
                 socket.emit('cash_out_result', result);
+                
+                // Si el retiro fue exitoso, emitir actualización a todos
+                if (result.success) {
+                    this.broadcast(SOCKET_EVENTS.GAME_STATE_UPDATE, gameService.getGameState());
+                }
             });
 
             socket.on('disconnect', () => {
                 console.log('Usuario desconectado:', socket.id);
                 gameService.playerLeave(socket.id);
+                // Emitir actualización del estado tras desconexión
+                this.broadcast(SOCKET_EVENTS.GAME_STATE_UPDATE, gameService.getGameState());
             });
         });
     }
