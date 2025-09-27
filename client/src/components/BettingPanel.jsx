@@ -9,8 +9,8 @@ const BettingPanel = () => {
 
   // Find my bet in active bets
   const myBet = gameState.activeBets?.find(bet => bet.playerId === player.id);
-  const hasActiveBet = !!myBet;
-  const hasCashedOut = myBet?.hasCashedOut || false;
+  const hasActiveBet = !!myBet || player.hasBet;
+  const hasCashedOut = myBet?.hasCashedOut || player.hasCashedOut;
 
   const canBet = connected && 
                 (gameState.currentState === 'waiting' || gameState.currentState === 'countdown') &&
@@ -158,6 +158,8 @@ const BettingPanel = () => {
           ⏰ ¡Últimos segundos para apostar!
         </div>
       )}
+
+
 
       {hasCashedOut && (
         <div className="cashout-success">

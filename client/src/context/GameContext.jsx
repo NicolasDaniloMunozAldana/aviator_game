@@ -81,6 +81,8 @@ export const GameProvider = ({ children }) => {
                     }));
                 }
             }
+            
+
         });
 
         // Actualización del multiplicador en tiempo real
@@ -88,7 +90,9 @@ export const GameProvider = ({ children }) => {
             console.log('Multiplicador actualizado:', data.multiplier);
             setGameState(prev => ({
                 ...prev,
-                currentMultiplier: data.multiplier
+                currentMultiplier: data.multiplier,
+                // Asegurar que el estado esté en progreso cuando recibimos multiplicador
+                currentState: prev.currentState === 'countdown' || prev.currentState === 'waiting' ? 'in_progress' : prev.currentState
             }));
         });
 
@@ -112,7 +116,8 @@ export const GameProvider = ({ children }) => {
                 setPlayer(prev => ({
                     ...prev,
                     balance: result.newBalance,
-                    hasBet: true
+                    hasBet: true,
+                    hasCashedOut: false
                 }));
             } else {
                 alert(result.error || 'Error al realizar apuesta');
@@ -141,6 +146,7 @@ export const GameProvider = ({ children }) => {
                     balance: result.newBalance,
                     hasCashedOut: true
                 }));
+
             } else {
                 alert(result.error || 'Error al retirar');
             }

@@ -46,7 +46,8 @@ const MultiplierDisplay = ({ multiplier, gameState, timeRemaining }) => {
     if (currentState === 'waiting' || currentState === 'countdown') {
       return '1.00';
     }
-    return multiplier.toFixed(2);
+    // Asegurar que siempre mostremos al menos 1.00
+    return Math.max(multiplier || 1.0, 1.0).toFixed(2);
   };
 
   return (
