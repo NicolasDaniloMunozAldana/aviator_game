@@ -6,7 +6,7 @@ const PlayersList = ({ players = [], activeBets = [] }) => {
   const { gameState } = useGame();
 
   const getPlayerStatus = (player, playerBet) => {
-    if (!playerBet) return { status: 'waiting', icon: '⏳', text: 'Esperando' };
+    if (!playerBet) return { status: 'waiting', icon: '', text: 'Esperando' };
     
     if (playerBet.hasCashedOut) {
       return { 
@@ -56,7 +56,7 @@ const PlayersList = ({ players = [], activeBets = [] }) => {
 
   return (
     <div className="players-list">
-      <h3>👥 Jugadores en sala ({players.length})</h3>
+      <h3>Jugadores en sala ({players.length})</h3>
       
       <div className="game-stats">
         <div className="stat">
@@ -80,7 +80,6 @@ const PlayersList = ({ players = [], activeBets = [] }) => {
             <div key={player.id || index} className={`player-item ${status.status}`}>
               <div className="player-header">
                 <div className="player-info">
-                  <span className="player-avatar">👤</span>
                   <span className="player-name">{player.username || 'Jugador Anónimo'}</span>
                 </div>
                 <span className="player-balance">
@@ -124,7 +123,7 @@ const PlayersList = ({ players = [], activeBets = [] }) => {
       
       {activeBets.length === 0 && gameState.currentState === 'waiting' && (
         <div className="no-bets">
-          <p>🎯 ¡Sé el primero en apostar!</p>
+          <p>¡Sé el primero en apostar!</p>
         </div>
       )}
     </div>

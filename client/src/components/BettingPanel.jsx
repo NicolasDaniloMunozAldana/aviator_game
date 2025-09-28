@@ -77,9 +77,9 @@ const BettingPanel = () => {
     <div className="betting-panel">
       <div className="player-info">
         <div className="player-details">
-          <h3>👤 {player.username}</h3>
+          <h3>{player.username}</h3>
           <div className="balance">
-            <span>💰 Saldo: </span>
+            <span>Saldo: </span>
             <strong>${player.balance.toFixed(2)}</strong>
           </div>
         </div>
@@ -87,7 +87,7 @@ const BettingPanel = () => {
 
       <div className="bet-controls">
         <div className="bet-amount">
-          <label>💸 Cantidad de apuesta:</label>
+          <label>Cantidad de apuesta:</label>
           <div className="input-group">
             <input
               type="number"

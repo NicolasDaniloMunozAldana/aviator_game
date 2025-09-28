@@ -15,8 +15,8 @@ const GameHistory = ({ history = [] }) => {
 
   return (
     <div className="game-history">
-      <h3>📊 Historial de rondas</h3>
-      
+      <h3 style={{ marginLeft: '5px' }}>Historial de rondas</h3>
+
       <div className="history-list">
         {history.slice(0, 10).map((round, index) => {
           const crashMultiplier = round.crashMultiplier || 0;

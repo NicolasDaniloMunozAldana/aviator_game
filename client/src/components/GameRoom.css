@@ -1,49 +1,49 @@
 .game-room {
-    display: grid;
-    grid-template-columns: 2fr 1fr;
-    gap: 30px;
-    padding: 30px;
-    max-width: 1400px;
-    margin: 0 auto;
-    min-height: calc(100vh - 120px);
+  display: grid;
+  grid-template-columns: 2fr 1fr;
+  gap: 30px;
+  padding: 30px;
+  max-width: 1400px;
+  margin: 0 auto;
+  min-height: calc(100vh - 120px);
 }
 
 .game-main {
-    display: flex;
-    flex-direction: column;
-    gap: 25px;
+  display: flex;
+  flex-direction: column;
+  gap: 25px;
 }
 
 .game-sidebar {
-    display: flex;
-    flex-direction: column;
-    gap: 25px;
-    height: fit-content;
-    position: sticky;
-    top: 30px;
+  display: flex;
+  flex-direction: column;
+  gap: 25px;
+  height: fit-content;
+  position: sticky;
+  top: 30px;
 }
 
 /* Estado de conexión */
 .connection-status {
-    background: rgba(239, 68, 68, 0.2);
-    color: #ef4444;
-    padding: 15px;
-    text-align: center;
-    border-radius: 10px;
-    margin-bottom: 20px;
-    border: 1px solid rgba(239, 68, 68, 0.5);
-    animation: pulse 2s infinite;
+  background: rgba(239, 68, 68, 0.2);
+  color: #ef4444;
+  padding: 15px;
+  text-align: center;
+  border-radius: 10px;
+  margin-bottom: 20px;
+  border: 1px solid rgba(239, 68, 68, 0.5);
+  animation: pulse 2s infinite;
 }
 
 .connection-status p {
-    margin: 0;
-    font-weight: 600;
+  margin: 0;
+  font-weight: 600;
 }
 
 /* Pantalla completa estilo videojuego */
 .game-room.redesign-fullscreen {
-  --panel-bg: rgba(15,23,42,0.78);
-  --panel-border: rgba(255,255,255,0.08);
+  --panel-bg: rgba(15, 23, 42, 0.78);
+  --panel-border: rgba(255, 255, 255, 0.08);
   position: relative;
   width: 100%;
   min-height: 100vh;
@@ -60,17 +60,18 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: clamp(8px,2vh,24px) clamp(10px,2.2vw,40px) 0;
+  padding: clamp(8px, 2vh, 24px) clamp(10px, 2.2vw, 40px) 0;
 }
 
 /* FlightScene debe expandirse y ocupar 80-90% de alto disponible */
-.game-room.redesign-fullscreen .playfield > .flight-scene {
+.game-room.redesign-fullscreen .playfield>.flight-scene {
   width: 100%;
-  height: 84vh; /* dentro del rango 80-90 */
+  height: 84vh;
+  /* dentro del rango 80-90 */
   max-height: 920px;
   border-radius: 28px;
-  border: 1px solid rgba(255,255,255,0.06);
-  box-shadow: 0 0 0 1px rgba(255,255,255,0.04), 0 25px 70px -20px rgba(0,0,0,0.65);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.04), 0 25px 70px -20px rgba(0, 0, 0, 0.65);
 }
 
 /* HUD interno ya en FlightScene; ocultar elementos viejos en paneles */
@@ -79,11 +80,11 @@
   display: grid;
   grid-template-columns: 1.4fr 1fr 1.2fr;
   gap: 18px;
-  padding: 8px clamp(12px,2vw,40px) clamp(10px,1.6vh,18px);
-  background: linear-gradient(180deg, rgba(2,6,23,0) 0%, rgba(2,6,23,0.85) 40%, rgba(2,6,23,0.95) 100%);
+  padding: 8px clamp(12px, 2vw, 40px) clamp(10px, 1.6vh, 18px);
+  background: linear-gradient(180deg, rgba(2, 6, 23, 0) 0%, rgba(2, 6, 23, 0.85) 40%, rgba(2, 6, 23, 0.95) 100%);
   backdrop-filter: blur(26px) saturate(1.4);
-  border-top: 1px solid rgba(255,255,255,0.05);
-  box-shadow: 0 -10px 30px -8px rgba(0,0,0,0.6);
+  border-top: 1px solid rgba(255, 255, 255, 0.05);
+  box-shadow: 0 -10px 30px -8px rgba(0, 0, 0, 0.6);
 }
 
 .bottom-bar .panel {
@@ -110,129 +111,270 @@
 }
 
 /* Ocultar títulos con emojis y mejorar tipografía */
-.bottom-bar .panel h3 { 
-  margin: 0 0 8px; 
-  font-size: 0.75rem; 
-  letter-spacing: 1px; 
-  font-weight: 600; 
-  text-transform: uppercase; 
-  color: rgba(255,255,255,0.55); 
-  border: 0; 
-  padding: 0; 
+.bottom-bar .panel h3 {
+  margin: 0 0 8px;
+  font-size: 0.75rem;
+  letter-spacing: 1px;
+  font-weight: 600;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.55);
+  border: 0;
+  padding: 0;
 }
 
 /* Simplificaciones específicas */
-.bottom-bar .players-list { max-height: unset; overflow: hidden; }
-.bottom-bar .players-list .player-item { padding: 8px 10px; border-radius: 10px; }
-.bottom-bar .players-list .player-header { margin-bottom: 4px; }
-.bottom-bar .players-list .player-status { margin-bottom: 4px; }
-.bottom-bar .players-list .player-item:hover { transform: none; }
-.bottom-bar .players-list h3::before { content: none; }
+.bottom-bar .players-list {
+  max-height: unset;
+  overflow: hidden;
+}
 
-.bottom-bar .game-history { max-height: unset; overflow: hidden; }
-.bottom-bar .game-history .history-list { flex-wrap: wrap; display: flex; flex-direction: row; gap: 6px; }
-.bottom-bar .game-history .history-item { flex: 1 1 calc(50% - 6px); margin: 0; padding: 6px 8px; font-size: 0.7rem; border-left: 0; }
-.bottom-bar .game-history h3 { margin-bottom: 6px; }
+.bottom-bar .players-list .player-item {
+  padding: 8px 10px;
+  border-radius: 10px;
+}
 
-.bottom-bar .betting-panel { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
-.bottom-bar .betting-panel .player-info { grid-column: 1 / -1; margin: 0 0 4px; padding: 0 0 6px; border: 0; }
-.bottom-bar .betting-panel .player-details h3 { font-size: 0.9rem; color: #38bdf8; }
-.bottom-bar .betting-panel .balance { font-size: 0.75rem; }
-.bottom-bar .betting-panel .bet-controls { flex-direction: row; flex-wrap: wrap; gap: 8px; }
-.bottom-bar .betting-panel .bet-amount { width: 100%; margin: 0; }
-.bottom-bar .betting-panel .bet-amount label { font-size: 0.65rem; }
-.bottom-bar .betting-panel .input-group input { padding: 10px 14px; font-size: 0.85rem; }
-.bottom-bar .betting-panel .quick-bets { flex-direction: row; flex-wrap: wrap; gap: 6px; }
-.bottom-bar .betting-panel .quick-label { display: none; }
-.bottom-bar .betting-panel .quick-bet-btn { margin: 0; padding: 6px 10px; font-size: 0.7rem; border-radius: 6px; }
-.bottom-bar .betting-panel .bet-btn, 
-.bottom-bar .betting-panel .cashout-btn { padding: 10px 14px; font-size: 0.75rem; border-radius: 10px; letter-spacing: 0.5px; }
-.bottom-bar .betting-panel .bet-status { padding: 8px 10px; gap: 4px; }
-.bottom-bar .betting-panel .active-bet { font-size: 0.75rem; }
-.bottom-bar .betting-panel .potential-winnings { font-size: 0.65rem; }
-.bottom-bar .betting-panel .betting-tips, 
-.bottom-bar .betting-panel .cashout-success { display: none; }
+.bottom-bar .players-list .player-header {
+  margin-bottom: 4px;
+}
+
+.bottom-bar .players-list .player-status {
+  margin-bottom: 4px;
+}
+
+.bottom-bar .players-list .player-item:hover {
+  transform: none;
+}
+
+.bottom-bar .players-list h3::before {
+  content: none;
+}
+
+.bottom-bar .game-history {
+  max-height: unset;
+  overflow: hidden;
+}
+
+.bottom-bar .game-history .history-list {
+  flex-wrap: wrap;
+  display: flex;
+  flex-direction: row;
+  gap: 6px;
+}
+
+.bottom-bar .game-history .history-item {
+  flex: 1 1 calc(50% - 6px);
+  margin: 0;
+  padding: 6px 8px;
+  font-size: 0.7rem;
+  border-left: 0;
+}
+
+.bottom-bar .game-history h3 {
+  margin-bottom: 6px;
+}
+
+.bottom-bar .betting-panel {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+}
+
+.bottom-bar .betting-panel .player-info {
+  grid-column: 1 / -1;
+  margin: 0 0 4px;
+  padding: 0 0 6px;
+  border: 0;
+}
+
+.bottom-bar .betting-panel .player-details h3 {
+  font-size: 0.9rem;
+  color: #38bdf8;
+}
+
+.bottom-bar .betting-panel .balance {
+  font-size: 0.75rem;
+}
+
+.bottom-bar .betting-panel .bet-controls {
+  flex-direction: row;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.bottom-bar .betting-panel .bet-amount {
+  width: 100%;
+  margin: 0;
+}
+
+.bottom-bar .betting-panel .bet-amount label {
+  font-size: 0.65rem;
+}
+
+.bottom-bar .betting-panel .input-group input {
+  padding: 10px 14px;
+  font-size: 0.85rem;
+}
+
+.bottom-bar .betting-panel .quick-bets {
+  flex-direction: row;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.bottom-bar .betting-panel .quick-label {
+  display: none;
+}
+
+.bottom-bar .betting-panel .quick-bet-btn {
+  margin: 0;
+  padding: 6px 10px;
+  font-size: 0.7rem;
+  border-radius: 6px;
+}
+
+.bottom-bar .betting-panel .bet-btn,
+.bottom-bar .betting-panel .cashout-btn {
+  padding: 10px 14px;
+  font-size: 0.75rem;
+  border-radius: 10px;
+  letter-spacing: 0.5px;
+}
+
+.bottom-bar .betting-panel .bet-status {
+  padding: 8px 10px;
+  gap: 4px;
+}
+
+.bottom-bar .betting-panel .active-bet {
+  font-size: 0.75rem;
+}
+
+.bottom-bar .betting-panel .potential-winnings {
+  font-size: 0.65rem;
+}
+
+.bottom-bar .betting-panel .betting-tips,
+.bottom-bar .betting-panel .cashout-success {
+  display: none;
+}
 
 /* Conexión */
-.connection-status.inline-status { position: absolute; top: 8px; right: 12px; margin: 0; padding: 6px 12px; font-size: 0.7rem; backdrop-filter: blur(8px); }
+.connection-status.inline-status {
+  position: absolute;
+  top: 8px;
+  right: 12px;
+  margin: 0;
+  padding: 6px 12px;
+  font-size: 0.7rem;
+  backdrop-filter: blur(8px);
+}
 
 /* Eliminar grid antiguo heredado */
-.game-room { all: unset; }
+.game-room {
+  all: unset;
+}
 
 /* Responsive */
 @media (max-width: 1200px) {
-  .bottom-bar { grid-template-columns: 1.3fr 0.9fr 1fr; }
+  .bottom-bar {
+    grid-template-columns: 1.3fr 0.9fr 1fr;
+  }
 }
+
 @media (max-width: 980px) {
-  .bottom-bar { grid-template-columns: 1fr; }
-  .bottom-bar .panel { min-height: unset; }
-  .game-room.redesign-fullscreen .playfield > .flight-scene { height: 70vh; }
-  .bottom-bar .betting-panel { grid-template-columns: 1fr 1fr; }
+  .bottom-bar {
+    grid-template-columns: 1fr;
+  }
+
+  .bottom-bar .panel {
+    min-height: unset;
+  }
+
+  .game-room.redesign-fullscreen .playfield>.flight-scene {
+    height: 70vh;
+  }
+
+  .bottom-bar .betting-panel {
+    grid-template-columns: 1fr 1fr;
+  }
 }
+
 @media (max-width: 640px) {
-  .game-room.redesign-fullscreen .playfield > .flight-scene { height: 62vh; }
-  .bottom-bar .betting-panel { grid-template-columns: 1fr; }
-  .bottom-bar { padding: 8px 14px 14px; }
+  .game-room.redesign-fullscreen .playfield>.flight-scene {
+    height: 62vh;
+  }
+
+  .bottom-bar .betting-panel {
+    grid-template-columns: 1fr;
+  }
+
+  .bottom-bar {
+    padding: 8px 14px 14px;
+  }
 }
 
 /* Animaciones */
 @keyframes fadeIn {
-    from {
-        opacity: 0;
-        transform: translateY(20px);
-    }
-    to {
-        opacity: 1;
-        transform: translateY(0);
-    }
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
-.game-room > * {
-    animation: fadeIn 0.5s ease-out;
+.game-room>* {
+  animation: fadeIn 0.5s ease-out;
 }
 
 /* Estados del juego */
 .game-waiting {
-    border-left: 4px solid #4cc9f0;
+  border-left: 4px solid #4cc9f0;
 }
 
 .game-countdown {
-    border-left: 4px solid #f72585;
-    animation: pulse 1s infinite;
+  border-left: 4px solid #f72585;
+  animation: pulse 1s infinite;
 }
 
 .game-in-progress {
-    border-left: 4px solid #4ade80;
+  border-left: 4px solid #4ade80;
 }
 
 .game-crashed {
-    border-left: 4px solid #ef4444;
+  border-left: 4px solid #ef4444;
 }
 
 @keyframes pulse {
-    0%, 100% {
-        opacity: 1;
-    }
-    50% {
-        opacity: 0.7;
-    }
+
+  0%,
+  100% {
+    opacity: 1;
+  }
+
+  50% {
+    opacity: 0.7;
+  }
 }
 
 /* Scroll personalizado */
 .game-sidebar::-webkit-scrollbar {
-    width: 6px;
+  width: 6px;
 }
 
 .game-sidebar::-webkit-scrollbar-track {
-    background: rgba(255, 255, 255, 0.1);
-    border-radius: 3px;
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 3px;
 }
 
 .game-sidebar::-webkit-scrollbar-thumb {
-    background: #4cc9f0;
-    border-radius: 3px;
+  background: #4cc9f0;
+  border-radius: 3px;
 }
 
 .game-sidebar::-webkit-scrollbar-thumb:hover {
-    background: #3aa8d4;
+  background: #3aa8d4;
 }
