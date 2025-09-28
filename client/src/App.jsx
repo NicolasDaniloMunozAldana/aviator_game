@@ -7,10 +7,7 @@ function App() {
   return (
     <GameProvider>
       <div className="App">
-        <header className="app-header">
-          <h1>Juego Aviador</h1>
-          <p>Sala de apuestas en tiempo real</p>
-        </header>
+
         <GameRoom />
       </div>
     </GameProvider>

@@ -1,10 +1,10 @@
 import React from 'react';
 import { useGame } from '../context/GameContext';
-import MultiplierDisplay from './MultiplierDisplay';
 import BettingPanel from './BettingPanel';
 import PlayersList from './PlayersList';
 import GameHistory from './GameHistory';
 import LoginForm from './LoginForm';
+import FlightScene from './FlightScene';
 import './GameRoom.css';
 
 const GameRoom = () => {
@@ -15,30 +15,30 @@ const GameRoom = () => {
   }
 
   return (
-    <div className="game-room">
+    <div className="game-room redesign-fullscreen">
       {!connected && (
-        <div className="connection-status">
-          <p>⚠️ Conectando al servidor...</p>
+        <div className="connection-status inline-status">
+          <p>Conectando al servidor...</p>
         </div>
       )}
-      
-      <div className="game-main">
-        <MultiplierDisplay 
-          multiplier={gameState.currentMultiplier || 1.00}
-          gameState={gameState}
-          timeRemaining={gameState.timeRemaining || 0}
-        />
-        
-        <BettingPanel />
+
+      <div className="playfield">
+        <FlightScene />
       </div>
 
-      <div className="game-sidebar">
-        <PlayersList 
-          players={gameState.players || []}
-          activeBets={gameState.activeBets || []}
-        />
-        
-        <GameHistory history={gameHistory || []} />
+      <div className="bottom-bar">
+        <div className="panel panel-bet">
+          <BettingPanel />
+        </div>
+        <div className="panel panel-history">
+          <GameHistory history={gameHistory || []} />
+        </div>
+        <div className="panel panel-players">
+          <PlayersList 
+            players={gameState.players || []}
+            activeBets={gameState.activeBets || []}
+          />
+        </div>
       </div>
     </div>
   );
