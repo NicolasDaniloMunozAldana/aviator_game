@@ -6,8 +6,12 @@ export const useSocket = (serverUrl) => {
 
   useEffect(() => {
     const newSocket = io(serverUrl, {
-      transports: ['websocket'],
-      autoConnect: true
+      transports: ['websocket', 'polling'],
+      autoConnect: true,
+      forceNew: true,
+      reconnection: true,
+      timeout: 20000,
+      upgrade: true
     });
 
     newSocket.on('connect', () => {
