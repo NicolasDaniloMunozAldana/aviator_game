@@ -1,4 +1,4 @@
-import {Server} from 'socket.io';
+import { Server } from 'socket.io';
 import { SOCKET_EVENTS } from '../utils/constants.js';
 import gameService from './GameService.js';
 
@@ -13,8 +13,11 @@ export class SocketService {
         this.io = new Server(server, {
             cors: {
                 origin: "*",
-                methods: ["GET", "POST"]
-            }
+                methods: ["GET", "POST"],
+                credentials: true
+            },
+            allowEIO3: true,
+            transports: ['websocket', 'polling']
         });
 
         this.setupSocketHandlers();
@@ -44,7 +47,7 @@ export class SocketService {
                 console.log('Apuesta recibida:', betData);
                 const result = gameService.placeBet(socket.id, betData);
                 socket.emit('bet_result', result);
-                
+
                 // Si la apuesta fue exitosa, emitir actualización a todos
                 if (result.success) {
                     this.broadcast(SOCKET_EVENTS.GAME_STATE_UPDATE, gameService.getGameState());
@@ -55,7 +58,7 @@ export class SocketService {
                 console.log('Retiro solicitado por:', socket.id);
                 const result = gameService.cashOut(socket.id);
                 socket.emit('cash_out_result', result);
-                
+
                 // Si el retiro fue exitoso, emitir actualización a todos
                 if (result.success) {
                     this.broadcast(SOCKET_EVENTS.GAME_STATE_UPDATE, gameService.getGameState());

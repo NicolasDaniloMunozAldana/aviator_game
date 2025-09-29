@@ -35,8 +35,11 @@ socketService.initialize(server);
 
 
 const PORT = process.env.PORT || 3000;
-server.listen(PORT, () => {
+const HOST = process.env.HOST || '0.0.0.0';
+
+server.listen(PORT, HOST, () => {
     console.log(`Servidor de Aviator ejecutándose en puerto ${PORT}`);
+    console.log(`Host: ${HOST}`);
     console.log(`Health check: http://localhost:${PORT}/api/health`);
     console.log(`WebSockets: Habilitados`);
 });

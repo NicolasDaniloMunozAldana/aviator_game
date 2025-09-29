@@ -36,8 +36,15 @@ export const GameProvider = ({ children }) => {
     const [gameHistory, setGameHistory] = useState([]);
     const [connected, setConnected] = useState(false);
 
-    const socket = useSocket('http://localhost:3000');
+    const getServerUrl = () => {
+        const hostname = window.location.hostname;
+        if (hostname === 'localhost' || hostname === '127.0.0.1') {
+            return 'http://localhost:3000';
+        }
+        return `http://${hostname}:3000`;
+    };
 
+    const socket = useSocket(getServerUrl());
     // Efecto para manejar eventos del socket
     useEffect(() => {
         if (!socket) return;
@@ -62,7 +69,7 @@ export const GameProvider = ({ children }) => {
                 ...prev,
                 ...state
             }));
-            
+
             // Actualizar si tengo apuesta activa
             if (state.activeBets && socket.id) {
                 const myBet = state.activeBets.find(bet => bet.playerId === socket.id);
@@ -81,7 +88,7 @@ export const GameProvider = ({ children }) => {
                     }));
                 }
             }
-            
+
 
         });
 
@@ -99,7 +106,7 @@ export const GameProvider = ({ children }) => {
         // Cuando un jugador apuesta
         socket.on('player_bet', (betData) => {
             console.log('Apuesta realizada:', betData);
-            
+
             // Actualizar estado del juego si viene incluido
             if (betData.gameState) {
                 setGameState(prev => ({
@@ -127,7 +134,7 @@ export const GameProvider = ({ children }) => {
         // Cuando un jugador retira
         socket.on('player_cash_out', (cashOutData) => {
             console.log('Jugador retiró:', cashOutData);
-            
+
             // Actualizar estado del juego si viene incluido
             if (cashOutData.gameState) {
                 setGameState(prev => ({
@@ -161,7 +168,7 @@ export const GameProvider = ({ children }) => {
         // Jugador se une
         socket.on('player_joined', (playerData) => {
             console.log('Jugador se unió:', playerData);
-            
+
             // Actualizar estado del juego si viene incluido
             if (playerData.gameState) {
                 setGameState(prev => ({
