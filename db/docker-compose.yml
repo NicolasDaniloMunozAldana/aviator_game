@@ -1,0 +1,189 @@
+services:
+  etcd1:
+    image: quay.io/coreos/etcd:v3.5.9
+    container_name: etcd1
+    environment:
+      ETCD_NAME: etcd1
+      ETCD_DATA_DIR: /etcd-data
+      ETCD_LISTEN_CLIENT_URLS: http://0.0.0.0:2379
+      ETCD_ADVERTISE_CLIENT_URLS: http://etcd1:2379
+      ETCD_LISTEN_PEER_URLS: http://0.0.0.0:2380
+      ETCD_INITIAL_ADVERTISE_PEER_URLS: http://etcd1:2380
+      ETCD_INITIAL_CLUSTER: etcd1=http://etcd1:2380,etcd2=http://etcd2:2380,etcd3=http://etcd3:2380
+      ETCD_INITIAL_CLUSTER_TOKEN: etcd-cluster
+      ETCD_INITIAL_CLUSTER_STATE: new
+    volumes:
+      - etcd1_data:/etcd-data
+    networks:
+      - pg_cluster
+    restart: unless-stopped
+
+  etcd2:
+    image: quay.io/coreos/etcd:v3.5.9
+    container_name: etcd2
+    environment:
+      ETCD_NAME: etcd2
+      ETCD_DATA_DIR: /etcd-data
+      ETCD_LISTEN_CLIENT_URLS: http://0.0.0.0:2379
+      ETCD_ADVERTISE_CLIENT_URLS: http://etcd2:2379
+      ETCD_LISTEN_PEER_URLS: http://0.0.0.0:2380
+      ETCD_INITIAL_ADVERTISE_PEER_URLS: http://etcd2:2380
+      ETCD_INITIAL_CLUSTER: etcd1=http://etcd1:2380,etcd2=http://etcd2:2380,etcd3=http://etcd3:2380
+      ETCD_INITIAL_CLUSTER_TOKEN: etcd-cluster
+      ETCD_INITIAL_CLUSTER_STATE: new
+    volumes:
+      - etcd2_data:/etcd-data
+    networks:
+      - pg_cluster
+    restart: unless-stopped
+
+  etcd3:
+    image: quay.io/coreos/etcd:v3.5.9
+    container_name: etcd3
+    environment:
+      ETCD_NAME: etcd3
+      ETCD_DATA_DIR: /etcd-data
+      ETCD_LISTEN_CLIENT_URLS: http://0.0.0.0:2379
+      ETCD_ADVERTISE_CLIENT_URLS: http://etcd3:2379
+      ETCD_LISTEN_PEER_URLS: http://0.0.0.0:2380
+      ETCD_INITIAL_ADVERTISE_PEER_URLS: http://etcd3:2380
+      ETCD_INITIAL_CLUSTER: etcd1=http://etcd1:2380,etcd2=http://etcd2:2380,etcd3=http://etcd3:2380
+      ETCD_INITIAL_CLUSTER_TOKEN: etcd-cluster
+      ETCD_INITIAL_CLUSTER_STATE: new
+    volumes:
+      - etcd3_data:/etcd-data
+    networks:
+      - pg_cluster
+    restart: unless-stopped
+
+  # Nodo PostgreSQL 1 (inicialmente maestro)
+  postgres1:
+    build:
+      context: .
+      dockerfile: Dockerfile.patroni
+    container_name: postgres1
+    user: postgres
+    environment:
+      PATRONI_NAME: postgres1
+      PATRONI_POSTGRESQL_DATA_DIR: /var/lib/postgresql/data/patroni
+      PATRONI_POSTGRESQL_PGPASS: /tmp/pgpass
+      PATRONI_ETCD3_HOSTS: etcd1:2379,etcd2:2379,etcd3:2379
+      PATRONI_SCOPE: postgres-cluster
+      PATRONI_RESTAPI_LISTEN: 0.0.0.0:8008
+      PATRONI_RESTAPI_CONNECT_ADDRESS: postgres1:8008
+      PATRONI_POSTGRESQL_LISTEN: 0.0.0.0:5432
+      PATRONI_POSTGRESQL_CONNECT_ADDRESS: postgres1:5432
+      PATRONI_SUPERUSER_USERNAME: postgres
+      PATRONI_SUPERUSER_PASSWORD: postgres123
+      PATRONI_REPLICATION_USERNAME: replicator
+      PATRONI_REPLICATION_PASSWORD: rep123
+      POSTGRES_PASSWORD: postgres123
+      PGUSER: postgres
+    volumes:
+      - postgres1_data:/var/lib/postgresql/data
+      - ./patroni.yml:/opt/patroni/patroni.yml
+    networks:
+      - pg_cluster
+    depends_on:
+      - etcd1
+      - etcd2
+      - etcd3
+    restart: unless-stopped
+
+  # Nodo PostgreSQL 2 (réplica)
+  postgres2:
+    build:
+      context: .
+      dockerfile: Dockerfile.patroni
+    user: postgres
+    container_name: postgres2
+    environment:
+      PATRONI_NAME: postgres2
+      PATRONI_POSTGRESQL_DATA_DIR: /var/lib/postgresql/data/patroni
+      PATRONI_POSTGRESQL_PGPASS: /tmp/pgpass
+      PATRONI_ETCD3_HOSTS: etcd1:2379,etcd2:2379,etcd3:2379
+      PATRONI_SCOPE: postgres-cluster
+      PATRONI_RESTAPI_LISTEN: 0.0.0.0:8008
+      PATRONI_RESTAPI_CONNECT_ADDRESS: postgres2:8008
+      PATRONI_POSTGRESQL_LISTEN: 0.0.0.0:5432
+      PATRONI_POSTGRESQL_CONNECT_ADDRESS: postgres2:5432
+      PATRONI_SUPERUSER_USERNAME: postgres
+      PATRONI_SUPERUSER_PASSWORD: postgres123
+      PATRONI_REPLICATION_USERNAME: replicator
+      PATRONI_REPLICATION_PASSWORD: rep123
+      POSTGRES_PASSWORD: postgres123
+      PGUSER: postgres
+    volumes:
+      - postgres2_data:/var/lib/postgresql/data
+      - ./patroni.yml:/opt/patroni/patroni.yml
+    networks:
+      - pg_cluster
+    depends_on:
+      - etcd1
+      - etcd2
+      - etcd3
+    restart: unless-stopped
+
+  # Nodo PostgreSQL 3 (réplica)
+  postgres3:
+    build:
+      context: .
+      dockerfile: Dockerfile.patroni
+    container_name: postgres3
+    user: postgres
+    environment:
+      PATRONI_NAME: postgres3
+      PATRONI_POSTGRESQL_DATA_DIR: /var/lib/postgresql/data/patroni
+      PATRONI_POSTGRESQL_PGPASS: /tmp/pgpass
+      PATRONI_ETCD3_HOSTS: etcd1:2379,etcd2:2379,etcd3:2379
+      PATRONI_SCOPE: postgres-cluster
+      PATRONI_RESTAPI_LISTEN: 0.0.0.0:8008
+      PATRONI_RESTAPI_CONNECT_ADDRESS: postgres3:8008
+      PATRONI_POSTGRESQL_LISTEN: 0.0.0.0:5432
+      PATRONI_POSTGRESQL_CONNECT_ADDRESS: postgres3:5432
+      PATRONI_SUPERUSER_USERNAME: postgres
+      PATRONI_SUPERUSER_PASSWORD: postgres123
+      PATRONI_REPLICATION_USERNAME: replicator
+      PATRONI_REPLICATION_PASSWORD: rep123
+      POSTGRES_PASSWORD: postgres123
+      PGUSER: postgres
+    volumes:
+      - postgres3_data:/var/lib/postgresql/data
+      - ./patroni.yml:/opt/patroni/patroni.yml
+    networks:
+      - pg_cluster
+    depends_on:
+      - etcd1
+      - etcd2
+      - etcd3
+    restart: unless-stopped
+
+  # HAProxy para balanceo de carga
+  haproxy:
+    image: haproxy:2.8
+    container_name: haproxy
+    ports:
+      - "5432:5432"    # PostgreSQL puerto principal
+      - "5433:5433"    # PostgreSQL solo lectura
+      - "8080:8080"    # HAProxy stats
+    volumes:
+      - ./haproxy.cfg:/usr/local/etc/haproxy/haproxy.cfg:ro
+    networks:
+      - pg_cluster
+    depends_on:
+      - postgres1
+      - postgres2
+      - postgres3
+    restart: unless-stopped
+
+volumes:
+  etcd1_data:
+  etcd2_data:
+  etcd3_data:
+  postgres1_data:
+  postgres2_data:
+  postgres3_data:
+
+networks:
+  pg_cluster:
+    driver: bridge
