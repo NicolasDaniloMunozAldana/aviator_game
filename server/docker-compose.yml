@@ -13,6 +13,7 @@ services:
     environment:
       - PORT=3000
       - REDIS_URL=redis://redis:6379
+      - IS_LEADER=true
       - NAME=backend1
     depends_on:
       - redis

@@ -29,14 +29,23 @@ export class SocketService {
 
         this.io.adapter(createAdapter(pubClient, subClient));
 
-
-
+        // Configurar manejadores de eventos socket
         this.setupSocketHandlers();
+
+        // Pasar la referencia del socketService al gameService
         gameService.setSocketService(this);
-        gameService.startGame();
+
+        // Solo el líder arranca el loop principal del juego
+        if (process.env.IS_LEADER === "true") {
+            console.log("Soy líder, arrancando game loop...");
+            gameService.startGame();
+        } else {
+            console.log("Soy réplica, solo escucho eventos.");
+        }
 
         console.log('SocketService inicializado con Redis adapter');
     }
+
 
     setupSocketHandlers() {
         this.io.on('connection', (socket) => {

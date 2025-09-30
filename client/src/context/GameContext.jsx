@@ -41,7 +41,7 @@ export const GameProvider = ({ children }) => {
         if (hostname === 'localhost' || hostname === '127.0.0.1') {
             return 'http://localhost:8080';
         }
-        return `http://${hostname}`;
+        return `http://192.168.1.43:8080`;
     };
 
     const socket = useSocket(getServerUrl());
