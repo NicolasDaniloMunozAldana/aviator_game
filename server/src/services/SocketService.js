@@ -1,4 +1,6 @@
 import { Server } from 'socket.io';
+import { createClient } from 'redis';
+import { createAdapter } from '@socket.io/redis-adapter';
 import { SOCKET_EVENTS } from '../utils/constants.js';
 import gameService from './GameService.js';
 
@@ -6,10 +8,9 @@ export class SocketService {
 
     constructor() {
         this.io = null;
-        this.redisClient = null;
     }
 
-    initialize(server) {
+    async initialize(server) {
         this.io = new Server(server, {
             cors: {
                 origin: "*",
@@ -20,16 +21,26 @@ export class SocketService {
             transports: ['websocket', 'polling']
         });
 
+        const redisUrl = process.env.REDIS_URL || "redis://redis:6379";
+        const pubClient = createClient({ url: redisUrl });
+        const subClient = pubClient.duplicate();
+        await pubClient.connect();
+        await subClient.connect();
+
+        this.io.adapter(createAdapter(pubClient, subClient));
+
+
+
         this.setupSocketHandlers();
         gameService.setSocketService(this);
         gameService.startGame();
 
-        console.log('SocketService inicializado');
+        console.log('SocketService inicializado con Redis adapter');
     }
 
     setupSocketHandlers() {
         this.io.on('connection', (socket) => {
-            console.log('Usuario conectado:', socket.id);
+            console.log(`Usuario conectado en ${process.env.NAME || 'backend'}:`, socket.id);
 
             // Enviar estado actual del juego al conectar
             socket.emit(SOCKET_EVENTS.GAME_STATE_UPDATE, gameService.getGameState());
@@ -77,12 +88,6 @@ export class SocketService {
     broadcast(event, data) {
         if (this.io) {
             this.io.emit(event, data);
-        }
-    }
-
-    emitToRoom(room, event, data) {
-        if (this.io) {
-            this.io.to(room).emit(event, data);
         }
     }
 }
