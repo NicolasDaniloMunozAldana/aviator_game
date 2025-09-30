@@ -1,0 +1,64 @@
+version: "3.8"
+services:
+  redis:
+    image: redis:7-alpine
+    restart: unless-stopped
+    networks:
+      - appnet
+
+  backend1:
+    build: 
+      context: .
+      dockerfile: Dockerfile.redis
+    environment:
+      - PORT=3000
+      - REDIS_URL=redis://redis:6379
+      - IS_LEADER=true
+      - NAME=backend1
+    depends_on:
+      - redis
+    networks:
+      - appnet
+
+  backend2:
+    build: 
+      context: .
+      dockerfile: Dockerfile.redis
+    environment:
+      - PORT=3000
+      - REDIS_URL=redis://redis:6379
+      - NAME=backend2
+    depends_on:
+      - redis
+    networks:
+      - appnet
+
+  backend3:
+    build: 
+      context: .
+      dockerfile: Dockerfile.redis
+    environment:
+      - PORT=3000
+      - REDIS_URL=redis://redis:6379
+      - NAME=backend3
+    depends_on:
+      - redis
+    networks:
+      - appnet
+
+  nginx:
+    image: nginx:stable-alpine
+    ports:
+      - "8080:80"
+    volumes:
+      - ./nginx/nginx.conf:/etc/nginx/nginx.conf:ro
+    depends_on:
+      - backend1
+      - backend2
+      - backend3
+    networks:
+      - appnet
+
+networks:
+  appnet:
+    driver: bridge

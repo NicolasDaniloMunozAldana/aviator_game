@@ -19,6 +19,7 @@ app.get('/api/health', (req, res) => {
     res.json({ 
         status: 'OK', 
         message: 'Aviator Game Server Running',
+        server: process.env.NAME || 'backend-default',
         timestamp: new Date().toISOString()
     });
 });
