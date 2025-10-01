@@ -1,6 +1,7 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { useGame } from '../context/GameContext';
 import './FlightScene.css';
+import BettingPanel from './BettingPanel';
 
 /**
  * Escena principal con fondo desplazándose y avión animado.
@@ -106,7 +107,7 @@ const FlightScene = () => {
     }
     if (currentState === 'crashed' && crashTrigger) {
       // Crash desde la posición actual con caída gradual
-      return { 
+      return {
         transform: `translateX(${planeHorizontal}px) translateY(-${planeAltitude - 350}px) rotate(45deg) scale(0.7)`,
         transition: 'transform 1.5s cubic-bezier(.77, .07, .91, .58), opacity 1.5s ease-out',
         opacity: 0.3
@@ -227,6 +228,9 @@ const FlightScene = () => {
 
   return (
     <div className={`flight-scene state-${currentState} ${crashTrigger ? 'crash' : ''}`}>
+      <div className="panel panel-bet">
+        <BettingPanel />
+      </div>
       <div className="scene-background" ref={containerRef}>
         <div className="scroll-layer" ref={layerRef} />
       </div>
@@ -254,7 +258,7 @@ const FlightScene = () => {
       )}
 
       {showExplosion && (
-        <div 
+        <div
           className="explosion"
           style={{
             left: `calc(18% + ${planeHorizontal}px)`,

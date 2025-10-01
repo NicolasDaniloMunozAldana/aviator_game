@@ -1,6 +1,5 @@
 import React from 'react';
 import { useGame } from '../context/GameContext';
-import BettingPanel from './BettingPanel';
 import PlayersList from './PlayersList';
 import GameHistory from './GameHistory';
 import LoginForm from './LoginForm';
@@ -27,14 +26,11 @@ const GameRoom = () => {
       </div>
 
       <div className="bottom-bar">
-        <div className="panel panel-bet">
-          <BettingPanel />
-        </div>
         <div className="panel panel-history">
           <GameHistory history={gameHistory || []} />
         </div>
         <div className="panel panel-players">
-          <PlayersList 
+          <PlayersList
             players={gameState.players || []}
             activeBets={gameState.activeBets || []}
           />
