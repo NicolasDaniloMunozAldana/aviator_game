@@ -8,9 +8,10 @@ import FlightScene from './FlightScene';
 import './GameRoom.css';
 
 const GameRoom = () => {
-  const { player, gameState, gameHistory, connected } = useGame();
+  const { player, gameState, gameHistory, connected, authenticationState } = useGame();
 
-  if (!player.username) {
+  // Mostrar LoginForm si no está autenticado o si está en proceso de autenticación
+  if (authenticationState !== 'authenticated' || !player.isAuthenticated) {
     return <LoginForm />;
   }
 

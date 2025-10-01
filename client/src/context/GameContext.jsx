@@ -30,18 +30,21 @@ export const GameProvider = ({ children }) => {
         balance: 1000,
         myBets: [],
         hasBet: false,
-        hasCashedOut: false
+        hasCashedOut: false,
+        userToken: null,
+        isAuthenticated: false
     });
 
     const [gameHistory, setGameHistory] = useState([]);
     const [connected, setConnected] = useState(false);
+    const [authenticationState, setAuthenticationState] = useState('checking'); // 'checking', 'authenticated', 'unauthenticated'
 
     const getServerUrl = () => {
         const hostname = window.location.hostname;
         if (hostname === 'localhost' || hostname === '127.0.0.1') {
             return 'http://localhost:8080';
         }
-        return `http://192.168.1.43:8080`;
+        return `http://10.4.73.2:8080`;
     };
 
     const socket = useSocket(getServerUrl());
@@ -54,12 +57,56 @@ export const GameProvider = ({ children }) => {
             console.log('Conectado al servidor:', socket.id);
             setConnected(true);
             setPlayer(prev => ({ ...prev, id: socket.id }));
+            
+            // Intentar autenticación automática si hay token guardado
+            tryAutoAuthentication();
         });
 
         // Conexión perdida
         socket.on('disconnect', () => {
             console.log('Desconectado del servidor');
             setConnected(false);
+            setAuthenticationState('unauthenticated');
+        });
+
+        // Autenticación exitosa
+        socket.on('authenticated', (authData) => {
+            console.log('Autenticación exitosa:', authData);
+            
+            // Guardar token en localStorage
+            if (authData.userToken) {
+                localStorage.setItem('aviator_user_token', authData.userToken);
+            }
+            
+            // Actualizar estado del jugador
+            setPlayer(prev => ({
+                ...prev,
+                ...authData.player,
+                userToken: authData.userToken,
+                isAuthenticated: true
+            }));
+            
+            setAuthenticationState('authenticated');
+        });
+
+        // Autenticación fallida
+        socket.on('authentication_failed', (errorData) => {
+            console.log('Autenticación fallida:', errorData);
+            
+            // Limpiar token inválido
+            localStorage.removeItem('aviator_user_token');
+            
+            setPlayer(prev => ({
+                ...prev,
+                userToken: null,
+                isAuthenticated: false
+            }));
+            
+            setAuthenticationState('unauthenticated');
+            
+            if (errorData.error) {
+                alert('Error de autenticación: ' + errorData.error);
+            }
         });
 
         // Estado del juego
@@ -205,6 +252,8 @@ export const GameProvider = ({ children }) => {
         return () => {
             socket.off('connect');
             socket.off('disconnect');
+            socket.off('authenticated');
+            socket.off('authentication_failed');
             socket.off('game_state_update');
             socket.off('multiplier_update');
             socket.off('player_bet');
@@ -218,23 +267,76 @@ export const GameProvider = ({ children }) => {
         };
     }, [socket]);
 
-    // Unirse al juego
-    const joinGame = (username) => {
+    // Intentar autenticación automática
+    const tryAutoAuthentication = () => {
+        const savedToken = localStorage.getItem('aviator_user_token');
+        const savedUsername = localStorage.getItem('aviator_username');
+        
+        if (savedToken && savedUsername && socket) {
+            console.log('Intentando autenticación automática...');
+            socket.emit('authenticate', {
+                username: savedUsername,
+                userToken: savedToken
+            });
+        } else {
+            setAuthenticationState('unauthenticated');
+        }
+    };
+
+    // Unirse al juego (nuevo método con autenticación)
+    const authenticateUser = (username) => {
         if (!socket || !username) return;
 
-        const playerData = {
-            username,
-            balance: player.balance,
-            id: socket.id
-        };
+        console.log('Iniciando autenticación para:', username);
+        
+        // Guardar username para futuras auto-autenticaciones
+        localStorage.setItem('aviator_username', username);
+        
+        const existingToken = localStorage.getItem('aviator_user_token');
+        
+        socket.emit('authenticate', {
+            username: username.trim(),
+            userToken: existingToken
+        });
+        
+        setAuthenticationState('checking');
+    };
 
-        setPlayer(prev => ({ ...prev, username, id: socket.id }));
-        socket.emit('player_join', playerData);
+    // Unirse al juego (método legacy - mantener para compatibilidad)
+    const joinGame = (username) => {
+        authenticateUser(username);
+    };
+
+    // Cerrar sesión
+    const logout = () => {
+        localStorage.removeItem('aviator_user_token');
+        localStorage.removeItem('aviator_username');
+        
+        setPlayer({
+            id: null,
+            username: '',
+            balance: 1000,
+            myBets: [],
+            hasBet: false,
+            hasCashedOut: false,
+            userToken: null,
+            isAuthenticated: false
+        });
+        
+        setAuthenticationState('unauthenticated');
+        
+        // Desconectar socket para forzar nueva conexión
+        if (socket) {
+            socket.disconnect();
+        }
     };
 
     // Realizar apuesta
     const placeBet = (amount) => {
-        if (!socket || !player.id) return;
+        if (!socket || !player.isAuthenticated) {
+            alert('Debes iniciar sesión para apostar');
+            return;
+        }
 
         const betData = {
             amount: parseFloat(amount),
@@ -247,8 +349,17 @@ export const GameProvider = ({ children }) => {
 
     // Retirar ganancias
     const cashOut = () => {
-        if (!socket || !player.id) return;
+        if (!socket || !player.isAuthenticated) {
+            alert('Debes iniciar sesión para retirar');
+            return;
+        }
         socket.emit('cash_out');
+    };
+
+    // Obtener estadísticas del jugador
+    const getPlayerStats = () => {
+        if (!socket || !player.isAuthenticated) return;
+        socket.emit('get_player_stats');
     };
 
     const value = {
@@ -257,9 +368,13 @@ export const GameProvider = ({ children }) => {
         gameHistory,
         socket,
         connected,
+        authenticationState,
         joinGame,
+        authenticateUser,
+        logout,
         placeBet,
-        cashOut
+        cashOut,
+        getPlayerStats
     };
 
     return (

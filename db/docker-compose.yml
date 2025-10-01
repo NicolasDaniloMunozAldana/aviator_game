@@ -16,6 +16,11 @@ services:
       - etcd1_data:/etcd-data
     networks:
       - pg_cluster
+    healthcheck:
+      test: ["CMD", "etcdctl", "endpoint", "health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
     restart: unless-stopped
 
   etcd2:
@@ -35,6 +40,11 @@ services:
       - etcd2_data:/etcd-data
     networks:
       - pg_cluster
+    healthcheck:
+      test: ["CMD", "etcdctl", "endpoint", "health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
     restart: unless-stopped
 
   etcd3:
@@ -54,6 +64,11 @@ services:
       - etcd3_data:/etcd-data
     networks:
       - pg_cluster
+    healthcheck:
+      test: ["CMD", "etcdctl", "endpoint", "health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
     restart: unless-stopped
 
   # Nodo PostgreSQL 1 (inicialmente maestro)
@@ -62,7 +77,6 @@ services:
       context: .
       dockerfile: Dockerfile.patroni
     container_name: postgres1
-    user: postgres
     environment:
       PATRONI_NAME: postgres1
       PATRONI_POSTGRESQL_DATA_DIR: /var/lib/postgresql/data/patroni
@@ -85,9 +99,12 @@ services:
     networks:
       - pg_cluster
     depends_on:
-      - etcd1
-      - etcd2
-      - etcd3
+      etcd1:
+        condition: service_healthy
+      etcd2:
+        condition: service_healthy
+      etcd3:
+        condition: service_healthy
     restart: unless-stopped
 
   # Nodo PostgreSQL 2 (réplica)
@@ -95,7 +112,6 @@ services:
     build:
       context: .
       dockerfile: Dockerfile.patroni
-    user: postgres
     container_name: postgres2
     environment:
       PATRONI_NAME: postgres2
@@ -119,9 +135,12 @@ services:
     networks:
       - pg_cluster
     depends_on:
-      - etcd1
-      - etcd2
-      - etcd3
+      etcd1:
+        condition: service_healthy
+      etcd2:
+        condition: service_healthy
+      etcd3:
+        condition: service_healthy
     restart: unless-stopped
 
   # Nodo PostgreSQL 3 (réplica)
@@ -130,7 +149,6 @@ services:
       context: .
       dockerfile: Dockerfile.patroni
     container_name: postgres3
-    user: postgres
     environment:
       PATRONI_NAME: postgres3
       PATRONI_POSTGRESQL_DATA_DIR: /var/lib/postgresql/data/patroni
@@ -153,9 +171,12 @@ services:
     networks:
       - pg_cluster
     depends_on:
-      - etcd1
-      - etcd2
-      - etcd3
+      etcd1:
+        condition: service_healthy
+      etcd2:
+        condition: service_healthy
+      etcd3:
+        condition: service_healthy
     restart: unless-stopped
 
   # HAProxy para balanceo de carga
@@ -163,9 +184,9 @@ services:
     image: haproxy:2.8
     container_name: haproxy
     ports:
-      - "5432:5432"    # PostgreSQL puerto principal
-      - "5433:5433"    # PostgreSQL solo lectura
-      - "8080:8080"    # HAProxy stats
+      - "15432:5432"    # PostgreSQL puerto principal
+      - "15433:5433"    # PostgreSQL solo lectura
+      - "9090:8080"    # HAProxy stats
     volumes:
       - ./haproxy.cfg:/usr/local/etc/haproxy/haproxy.cfg:ro
     networks:

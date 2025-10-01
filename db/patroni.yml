@@ -23,14 +23,11 @@ bootstrap:
         shared_preload_libraries: 'pg_stat_statements'
         wal_level: replica
         hot_standby: "on"
-        wal_keep_segments: 8
+        wal_keep_size: 128MB
         max_wal_senders: 5
         max_replication_slots: 5
         checkpoint_completion_target: 0.9
-        archive_mode: "on"
-        archive_command: 'test ! -f /tmp/archive/%f && cp %p /tmp/archive/%f'
-        recovery_conf:
-          restore_command: 'cp /tmp/archive/%f %p'
+        archive_mode: "off"
 
   initdb:
   - encoding: UTF8

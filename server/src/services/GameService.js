@@ -124,7 +124,7 @@ export class GameService {
 
     async setupLeaderCommandListener(socketService) {
         try {
-            await socketService.subClient.subscribe('leader_commands', (message) => {
+            await socketService.subClient.subscribe('leader_commands', async (message) => {
                 try {
                     const command = JSON.parse(message);
                     console.log(`Comando recibido de ${command.source}:`, command.action);
@@ -135,11 +135,11 @@ export class GameService {
                             this.playerJoin(command.data.socketId, command.data.playerData);
                             break;
                         case 'place_bet':
-                            const betResult = this.placeBet(command.data.socketId, command.data.betData);
+                            const betResult = await this.placeBet(command.data.socketId, command.data.betData);
                             // Enviar respuesta de vuelta via Redis si es necesario
                             break;
                         case 'cash_out':
-                            const cashResult = this.cashOut(command.data.socketId);
+                            const cashResult = await this.cashOut(command.data.socketId);
                             break;
                         case 'player_leave':
                             this.playerLeave(command.data.socketId);
@@ -160,16 +160,16 @@ export class GameService {
         }
     }
 
-    startGame() {
-        this.gameEngine.start();
+    async startGame() {
+        await this.gameEngine.start();
     }
 
-    placeBet(playerId, betData) {
-        return this.gameEngine.placeBet(playerId, betData);
+    async placeBet(playerId, betData) {
+        return await this.gameEngine.placeBet(playerId, betData);
     }
 
-    cashOut(playerId) {
-        return this.gameEngine.cashOut(playerId);
+    async cashOut(playerId) {
+        return await this.gameEngine.cashOut(playerId);
     }
 
     playerJoin(playerId, playerData) {

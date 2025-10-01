@@ -16,11 +16,15 @@ export class GameEngine extends EventEmitter {
         this.isRunning = false;
     }
 
-    start() {
+    async start() {
         if (this.isRunning) return;
 
         this.isRunning = true;
         this.gameState.roundNumber = 1;
+        
+        // Cargar historial desde base de datos
+        await this.gameState.loadGameHistory();
+        
         this.startWaitingPhase();
     }
 
@@ -76,8 +80,11 @@ export class GameEngine extends EventEmitter {
     startMultiplierPhase() {
         this.gameState.currentState = GAME_STATES.IN_PROGRESS;
         this.crashMultiplier.reset();
+        
+        // Marcar inicio de la ronda para tracking de BD
+        this.gameState.startNewRound();
 
-        this.multiplierInterval = setInterval(() => {
+        this.multiplierInterval = setInterval(async () => {
             const updateResult = this.crashMultiplier.update();
             this.gameState.currentMultiplier = updateResult.multiplier;
 
@@ -88,7 +95,7 @@ export class GameEngine extends EventEmitter {
 
             // Verificar si el juego ha crashado
             if (updateResult.crashed) {
-                this.endRound();
+                await this.endRound();
             }
         }, GAME_CONFIG.MULTIPLIER_UPDATE_INTERVAL);
     }
@@ -96,51 +103,61 @@ export class GameEngine extends EventEmitter {
     /**
      * Finaliza la ronda y calcula resultados
      */
-    endRound() {
+    async endRound() {
         clearInterval(this.multiplierInterval);
         this.gameState.currentState = GAME_STATES.CRASHED;
 
-        // Calcular resultados finales
-        const roundResults = this.gameState.calculateRoundResults();
-        
-        // Agregar al historial
-        this.gameState.gameHistory.unshift({
-            roundNumber: this.gameState.roundNumber,
-            crashMultiplier: this.gameState.currentMultiplier,
-            results: roundResults,
-            endedAt: new Date()
-        });
+        try {
+            // Calcular resultados finales (ahora es async)
+            const roundResults = await this.gameState.calculateRoundResults();
+            
+            // Agregar al historial
+            this.gameState.gameHistory.unshift({
+                roundNumber: this.gameState.roundNumber,
+                crashMultiplier: this.gameState.currentMultiplier,
+                results: roundResults,
+                endedAt: new Date()
+            });
 
-        // Mantener solo últimos 50 juegos en historial
-        if (this.gameState.gameHistory.length > 50) {
-            this.gameState.gameHistory = this.gameState.gameHistory.slice(0, 50);
+            // Mantener solo últimos 50 juegos en historial
+            if (this.gameState.gameHistory.length > 50) {
+                this.gameState.gameHistory = this.gameState.gameHistory.slice(0, 50);
+            }
+
+            this.emit('roundComplete', {
+                roundNumber: this.gameState.roundNumber,
+                crashMultiplier: this.gameState.currentMultiplier,
+                results: roundResults
+            });
+
+            // Preparar siguiente ronda después del delay configurado
+            setTimeout(() => {
+                this.gameState.roundNumber++;
+                this.gameState.resetForNewRound();
+                this.startWaitingPhase();
+            }, GAME_CONFIG.CRASH_DELAY);
+        } catch (error) {
+            console.error('Error finalizando ronda:', error);
+            // Continuar con la siguiente ronda aunque haya error
+            setTimeout(() => {
+                this.gameState.roundNumber++;
+                this.gameState.resetForNewRound();
+                this.startWaitingPhase();
+            }, GAME_CONFIG.CRASH_DELAY);
         }
-
-        this.emit('roundComplete', {
-            roundNumber: this.gameState.roundNumber,
-            crashMultiplier: this.gameState.currentMultiplier,
-            results: roundResults
-        });
-
-        // Preparar siguiente ronda después del delay configurado
-        setTimeout(() => {
-            this.gameState.roundNumber++;
-            this.gameState.resetForNewRound();
-            this.startWaitingPhase();
-        }, GAME_CONFIG.CRASH_DELAY);
     }
 
     /**
      * Jugador realiza una apuesta
      */
-    placeBet(playerId, betData) {
+    async placeBet(playerId, betData) {
         try {
             const player = this.gameState.players.get(playerId);
             if (!player) {
                 return { success: false, error: 'Jugador no encontrado' };
             }
 
-            const newBalance = this.gameState.placeBet(playerId, betData);
+            const newBalance = await this.gameState.placeBet(playerId, betData);
             
             // Emit bet placed with player info
             this.emit('betPlaced', {
@@ -156,6 +173,7 @@ export class GameEngine extends EventEmitter {
 
             return { success: true, newBalance };
         } catch (error) {
+            console.error('Error en placeBet:', error);
             return { success: false, error: error.message };
         }
     }
@@ -164,14 +182,14 @@ export class GameEngine extends EventEmitter {
     /**
      * Jugador retira sus ganancias
      */
-    cashOut(playerId) {
+    async cashOut(playerId) {
         try {
             const player = this.gameState.players.get(playerId);
             if (!player) {
                 return { success: false, error: 'Jugador no encontrado' };
             }
 
-            const result = this.gameState.cashOut(playerId);
+            const result = await this.gameState.cashOut(playerId);
             
             this.emit('cashOut', {
                 playerId,
@@ -183,6 +201,7 @@ export class GameEngine extends EventEmitter {
 
             return { success: true, ...result };
         } catch (error) {
+            console.error('Error en cashOut:', error);
             return { success: false, error: error.message };
         }
     }

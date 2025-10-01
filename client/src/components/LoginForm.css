@@ -85,6 +85,132 @@
     font-size: 0.9rem;
 }
 
+/* Estilos para usuario autenticado */
+.login-container.authenticated {
+    background: rgba(76, 201, 240, 0.1);
+    border-color: rgba(76, 201, 240, 0.3);
+}
+
+.user-info {
+    margin: 20px 0;
+    padding: 20px;
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 15px;
+    border: 1px solid rgba(76, 201, 240, 0.2);
+}
+
+.user-info h3 {
+    color: #4cc9f0;
+    font-size: 1.5rem;
+    margin-bottom: 15px;
+    font-weight: 600;
+}
+
+.user-info .balance {
+    color: #90ee90;
+    font-size: 1.2rem;
+    font-weight: 600;
+    margin-bottom: 10px;
+}
+
+.user-info .stats {
+    color: rgba(255, 255, 255, 0.8);
+    font-size: 0.9rem;
+    line-height: 1.5;
+}
+
+.login-actions {
+    display: flex;
+    gap: 15px;
+    margin: 25px 0;
+    justify-content: center;
+    flex-wrap: wrap;
+}
+
+.logout-btn {
+    background: linear-gradient(135deg, #f72585, #d63384) !important;
+    padding: 12px 20px !important;
+    font-size: 0.9rem !important;
+}
+
+.logout-btn:hover {
+    background: linear-gradient(135deg, #d63384, #f72585) !important;
+    box-shadow: 0 8px 16px rgba(247, 37, 133, 0.4) !important;
+}
+
+.new-user-btn {
+    background: linear-gradient(135deg, #6c757d, #495057) !important;
+    padding: 12px 20px !important;
+    font-size: 0.9rem !important;
+}
+
+.new-user-btn:hover {
+    background: linear-gradient(135deg, #495057, #6c757d) !important;
+    box-shadow: 0 8px 16px rgba(108, 117, 125, 0.4) !important;
+}
+
+.session-info {
+    color: rgba(144, 238, 144, 0.8) !important;
+    font-size: 0.8rem !important;
+    font-style: italic;
+    margin-top: 15px !important;
+}
+
+.login-hint {
+    margin: 15px 0;
+    padding: 10px;
+    background: rgba(76, 201, 240, 0.1);
+    border-radius: 8px;
+    border-left: 3px solid #4cc9f0;
+}
+
+.login-hint p {
+    margin: 0 !important;
+    color: #4cc9f0 !important;
+    font-size: 0.85rem !important;
+    font-weight: 500;
+}
+
+.initial-balance {
+    color: rgba(255, 255, 255, 0.6) !important;
+    font-size: 0.8rem !important;
+    font-style: italic;
+}
+
+/* Spinner de carga */
+.loading-spinner {
+    font-size: 2rem;
+    margin: 20px 0;
+    animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+    from { transform: rotate(0deg); }
+    to { transform: rotate(360deg); }
+}
+
+/* Responsive para elementos nuevos */
+@media (max-width: 480px) {
+    .login-actions {
+        flex-direction: column;
+        align-items: center;
+    }
+    
+    .logout-btn,
+    .new-user-btn {
+        width: 100%;
+        max-width: 200px;
+    }
+    
+    .user-info h3 {
+        font-size: 1.3rem;
+    }
+    
+    .user-info .balance {
+        font-size: 1.1rem;
+    }
+}
+
 /* Efectos de partículas de fondo */
 .login-form::before {
     content: '';
