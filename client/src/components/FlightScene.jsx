@@ -12,32 +12,66 @@ const FlightScene = () => {
   const [crashTrigger, setCrashTrigger] = useState(false);
   const prevStateRef = useRef(currentState);
 
-  // NUEVO: altura fija tras lanzamiento rápido
+  // NUEVO: altura y posición horizontal fija tras lanzamiento rápido
   const [planeAltitude, setPlaneAltitude] = useState(0); // px
+  const [planeHorizontal, setPlaneHorizontal] = useState(0); // px hacia adelante
   const [stabilized, setStabilized] = useState(false);
+  const [showExplosion, setShowExplosion] = useState(false);
+  // Nuevo: control de reentrada del avión tras un crash
+  const [reentryActive, setReentryActive] = useState(false); // indica si está ejecutando animación de reentrada
+  const [reentryStyle, setReentryStyle] = useState(null); // estilo dinámico (transform/opacity) durante reentrada
 
   useEffect(() => {
     // detectar cambio de estado para controlar animaciones
     if (prevStateRef.current !== 'crashed' && currentState === 'crashed') {
       setCrashTrigger(true);
+      setShowExplosion(true);
       setTimeout(() => setCrashTrigger(false), 2000);
+      setTimeout(() => setShowExplosion(false), 1500); // la explosión dura menos que el crash
     }
     if (currentState === 'waiting' || currentState === 'countdown') {
       setCrashTrigger(false);
+      setShowExplosion(false);
       setPlaneAltitude(0);
+      setPlaneHorizontal(0);
       setStabilized(false);
     }
+    // Cuando pasamos de crashed a waiting/countdown iniciamos animación de reentrada
+    if (prevStateRef.current === 'crashed' && (currentState === 'waiting' || currentState === 'countdown')) {
+      // activamos reentrada: partimos fuera de pantalla a la izquierda y con opacidad 0
+      setReentryActive(true);
+      setReentryStyle({
+        transform: 'translateX(-420px) translateY(0) scale(0.9)',
+        opacity: 0
+      });
+      // siguiente frame: objetivo es posición natural (transform none => usamos 0) y opacidad 1
+      requestAnimationFrame(() => {
+        setReentryStyle({
+          transform: 'translateX(0) translateY(0) scale(1)',
+          opacity: 1,
+          transition: 'transform 1s ease-out, opacity 0.8s ease-out'
+        });
+      });
+      // al finalizar limpiamos para restaurar animaciones idle
+      setTimeout(() => {
+        setReentryActive(false);
+        setReentryStyle(null);
+      }, 1100);
+    }
     if (currentState === 'in_progress' && prevStateRef.current !== 'in_progress') {
-      // ascenso inmediato a una altura objetivo (independiente del multiplicador)
-      const target = 240; // altura deseada
+      // ascenso y avance inmediato a posiciones objetivo (independiente del multiplicador)
+      const targetAltitude = 240; // altura deseada
+      const targetHorizontal = 200; // avance hacia adelante deseado
       // iniciar desde 0 para que el CSS transition haga el despegue rápido
       setPlaneAltitude(0);
+      setPlaneHorizontal(0);
       requestAnimationFrame(() => {
-        setPlaneAltitude(target);
+        setPlaneAltitude(targetAltitude);
+        setPlaneHorizontal(targetHorizontal);
       });
       setStabilized(false);
-      // después de la transición marcamos estabilizado
-      setTimeout(() => setStabilized(true), 900);
+      // después de la transición marcamos estabilizado (coincide con CSS transition)
+      setTimeout(() => setStabilized(true), 1200);
     }
     prevStateRef.current = currentState;
   }, [currentState]);
@@ -65,10 +99,27 @@ const FlightScene = () => {
     }
   };
 
-  // Estilo del avión: ya no depende del multiplicador, sólo del ascenso inicial
-  const planeDynamicStyle = (currentState === 'in_progress' && !crashTrigger)
-    ? { transform: `translateY(-${planeAltitude}px) rotate(-20deg)` }
-    : {};
+  // Estilo del avión: mantiene posición durante vuelo y maneja crash desde posición actual
+  const planeDynamicStyle = (() => {
+    if (currentState === 'in_progress' && !crashTrigger) {
+      return { transform: `translateX(${planeHorizontal}px) translateY(-${planeAltitude}px) rotate(-20deg)` };
+    }
+    if (currentState === 'crashed' && crashTrigger) {
+      // Crash desde la posición actual con caída gradual
+      return { 
+        transform: `translateX(${planeHorizontal}px) translateY(-${planeAltitude - 350}px) rotate(45deg) scale(0.7)`,
+        transition: 'transform 1.5s cubic-bezier(.77, .07, .91, .58), opacity 1.5s ease-out',
+        opacity: 0.3
+      };
+    }
+    return {};
+  })();
+
+  // Fusionar estilo dinámico de vuelo/crash con el de reentrada (si aplica y solo en waiting/countdown)
+  const combinedPlaneStyle = {
+    ...planeDynamicStyle,
+    ...(reentryActive ? reentryStyle : {})
+  };
 
   // ================= Scroll infinito del fondo =================
   const containerRef = useRef(null); // .scene-background
@@ -82,7 +133,7 @@ const FlightScene = () => {
     waiting: 20,
     countdown: 55,
     in_progress: 95,
-    crashed: 0
+    crashed: 10
   };
 
   // Ref para poder leer el estado más reciente dentro del callback de rAF sin reiniciar el loop
@@ -193,13 +244,28 @@ const FlightScene = () => {
       <img
         src="/avion.png"
         alt="Avión"
-        className={`plane ${currentState} ${currentState === 'in_progress' ? (stabilized ? 'stabilized' : 'launching') : ''}`}
-        style={planeDynamicStyle}
+        className={`plane ${crashTrigger ? 'crashing' : currentState} ${currentState === 'in_progress' ? (stabilized ? 'stabilized' : 'launching') : ''} ${reentryActive ? 'reentering' : ''}`}
+        style={combinedPlaneStyle}
         draggable={false}
       />
 
       {currentState === 'crashed' && (
         <div className="crash-flash" />
+      )}
+
+      {showExplosion && (
+        <div 
+          className="explosion"
+          style={{
+            left: `calc(18% + ${planeHorizontal}px)`,
+            bottom: `calc(15% + ${planeAltitude}px)`
+          }}
+        >
+          <div className="explosion-circle"></div>
+          <div className="smoke-puff smoke-1"></div>
+          <div className="smoke-puff smoke-2"></div>
+          <div className="smoke-puff smoke-3"></div>
+        </div>
       )}
     </div>
   );
