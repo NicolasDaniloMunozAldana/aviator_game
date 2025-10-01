@@ -4,6 +4,7 @@ import PlayersList from './PlayersList';
 import GameHistory from './GameHistory';
 import LoginForm from './LoginForm';
 import FlightScene from './FlightScene';
+import BettingPanel from './BettingPanel';
 import './GameRoom.css';
 
 const GameRoom = () => {
@@ -26,6 +27,9 @@ const GameRoom = () => {
       </div>
 
       <div className="bottom-bar">
+        <div className="panel panel-bet mobile-betting">
+          <BettingPanel />
+        </div>
         <div className="panel panel-history">
           <GameHistory history={gameHistory || []} />
         </div>

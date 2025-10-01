@@ -7,11 +7,33 @@
     height: 100%;
     width: 20%;
     min-width: 250px;
+    overflow-y: auto;
+    overflow-x: hidden;
+}
+
+/* Scrollbar personalizado para el betting panel */
+.betting-panel::-webkit-scrollbar {
+    width: 6px;
+}
+
+.betting-panel::-webkit-scrollbar-track {
+    background: rgba(0, 0, 0, 0.2);
+    border-radius: 3px;
+}
+
+.betting-panel::-webkit-scrollbar-thumb {
+    background: rgba(59, 130, 246, 0.5);
+    border-radius: 3px;
+    transition: background 0.3s ease;
+}
+
+.betting-panel::-webkit-scrollbar-thumb:hover {
+    background: rgba(59, 130, 246, 0.7);
 }
 
 .player-info {
     margin-bottom: 15px;
-    padding-bottom: 10px;
+    padding: 10px 0;
     border-bottom: 2px solid rgba(59, 130, 246, 0.2);
     justify-content: center;
 }
@@ -293,4 +315,116 @@
         opacity: 1;
         transform: translateY(0) scale(1);
     }
+}
+
+/* Responsive Design para el Betting Panel */
+@media (max-width: 1200px) {
+    .betting-panel {
+        width: 25%;
+        min-width: 220px;
+        padding: 20px 12px;
+    }
+    
+    .player-details h3 {
+        font-size: 1.1rem;
+    }
+    
+    .balance {
+        font-size: 1rem;
+    }
+}
+
+@media (max-width: 980px) {
+
+    .player-info .balance {
+        font-size: 0.8rem;
+    }
+
+    .betting-panel {
+        width: 30%;
+        min-width: 200px;
+        padding: 15px 10px;
+    }
+    
+    .bet-controls {
+        gap: 15px;
+    }
+    
+    .quick-bet-btn {
+        padding: 8px 16px;
+        font-size: 0.9rem;
+        margin-right: 8px;
+        margin-bottom: 6px;
+    }
+    
+    .bet-btn, .cashout-btn {
+        padding: 10px;
+        font-size: 0.9rem;
+    }
+    
+    .betting-tips, .cashout-success {
+        padding: 12px;
+        font-size: 0.9rem;
+    }
+}
+
+@media (max-height: 700px) {
+    .betting-panel {
+        padding: 10px 8px;
+    }
+    
+    .bet-controls {
+        gap: 10px;
+    }
+    
+    .player-info {
+        margin-bottom: 10px;
+    }
+    
+    .betting-tips, .cashout-success {
+        margin-top: 10px;
+        padding: 10px;
+        font-size: 0.85rem;
+    }
+}
+
+@media (max-width: 640px) {
+    /* En móviles, ocultamos el betting panel del side y se mostrará en bottom-bar */
+    .betting-panel {
+        display: none;
+    }
+
+    /* Estilos para cuando el betting panel está en bottom-bar */
+    .mobile-betting .betting-panel {
+        display: flex;
+        flex-direction: column;
+        position: relative;
+        width: 100%;
+        height: auto;
+        padding: 15px;
+        overflow: visible;
+        background: transparent;
+    }
+    
+    .mobile-betting .betting-panel .bet-controls {
+        gap: 12px;
+    }
+    
+    .mobile-betting .betting-panel .quick-bets-buttons {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px;
+    }
+    
+    .mobile-betting .betting-panel .quick-bet-btn {
+        flex: 1;
+        min-width: calc(50% - 4px);
+        margin: 0;
+    }
+    
+    .mobile-betting .betting-panel .quick-bet-btn.bigger-button {
+        flex: 1 1 100%;
+    }
+
+
 }

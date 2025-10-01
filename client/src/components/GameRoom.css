@@ -79,7 +79,7 @@
 
 .bottom-bar {
   display: grid;
-  grid-template-columns: 1.4fr 1fr 1.2fr;
+  grid-template-columns: repeat(2, 1fr);
   gap: 18px;
   padding: 8px clamp(12px, 2vw, 40px) clamp(10px, 1.6vh, 18px);
   background: linear-gradient(180deg, rgba(2, 6, 23, 0) 0%, rgba(2, 6, 23, 0.85) 40%, rgba(2, 6, 23, 0.95) 100%);
@@ -113,7 +113,6 @@
 
 /* Ocultar títulos con emojis y mejorar tipografía */
 .bottom-bar .panel h3 {
-  margin: 0 0 8px;
   font-size: 0.75rem;
   letter-spacing: 1px;
   font-weight: 600;
@@ -276,12 +275,6 @@
   all: unset;
 }
 
-/* Responsive */
-@media (max-width: 1200px) {
-  .bottom-bar {
-    grid-template-columns: 1.3fr 0.9fr 1fr;
-  }
-}
 
 @media (max-width: 980px) {
   .bottom-bar {
@@ -301,17 +294,63 @@
   }
 }
 
+/* Panel de apuestas móvil - oculto por defecto */
+.panel.panel-bet.mobile-betting {
+  display: none;
+}
+
 @media (max-width: 640px) {
   .game-room.redesign-fullscreen .playfield>.flight-scene {
     height: 62vh;
   }
 
-  .bottom-bar .betting-panel {
-    grid-template-columns: 1fr;
+  /* Mostrar panel de apuestas en bottom-bar para móviles */
+  .panel.panel-bet.mobile-betting {
+    display: flex;
   }
 
+  /* Cambiar grid para incluir el panel de apuestas */
   .bottom-bar {
+    grid-template-columns: 1fr;
     padding: 8px 14px 14px;
+  }
+
+  .bottom-bar .betting-panel {
+    grid-template-columns: repeat(2, 1fr);
+    position: relative;
+    width: 100%;
+    height: auto;
+    padding: 15px;
+    background: var(--panel-bg);
+    border: 1px solid var(--panel-border);
+    border-radius: 18px;
+    overflow: visible;
+  }
+
+  .bottom-bar .betting-panel .bet-controls {
+    display: grid;
+    grid-column: 1 / 3;
+    width: 100%;
+  }
+
+  .bottom-bar .betting-panel .bet-controls .bet-amount,
+  .bottom-bar .betting-panel .bet-controls .quick-bets {
+    grid-column: 1 / 2;
+    align-items: center;
+  }
+
+  .bottom-bar .betting-panel .bet-controls .quick-bets {
+    justify-content: center;
+  }
+
+  .bottom-bar .betting-panel .bet-btn,
+  .bottom-bar .betting-panel .cashout-btn {
+    grid-column: 2 / 3;
+    grid-row: 1 / 3;
+  }
+
+  .bottom-bar .betting-panel .input-group {
+    width: 80%;
   }
 }
 
