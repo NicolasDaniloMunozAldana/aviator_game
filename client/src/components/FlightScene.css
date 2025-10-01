@@ -10,14 +10,29 @@
   isolation: isolate;
 }
 
+/* Contenedor del fondo dinámico */
 .scene-background {
-  /* Ajuste: mostrar imagen completa en altura y repetir solo horizontalmente */
   position: absolute;
   inset: 0;
-  background: url('/scene.png') repeat-x center center;
-  background-size: auto 100%; /* toda la altura visible, sin recorte */
-  animation: scroll-bg 35s linear infinite;
+  overflow: hidden;
+  /* fallback color detrás de segmentos */
+  background: linear-gradient(to bottom,#0b1220,#0f172a 60%,#1e293b 100%);
+}
+
+/* Capa que se desplaza horizontalmente con transform */
+.scroll-layer {
+  position: absolute;
+  top: 0; left: 0; height: 100%; display: flex;
+  will-change: transform;
+}
+
+/* Cada segmento reutilizable del fondo */
+.bg-segment {
+  height: 100%; flex: 0 0 auto;
+  background: url('/scene.png') center center no-repeat;
+  background-size: auto 100%;
   image-rendering: -webkit-optimize-contrast;
+  filter: brightness(0.85) saturate(0.95);
 }
 
 /* Nueva capa cielo para altura (gradientes suaves) */
@@ -38,10 +53,7 @@
   z-index: 2;
 }
 
-@keyframes scroll-bg {
-  0% { background-position: 0 100%; }
-  100% { background-position: -2000px 100%; }
-}
+/* (Eliminada animación scroll-bg, ahora gestionado por JS) */
 
 .plane {
   position: absolute;
@@ -158,16 +170,10 @@
   box-shadow: 0 0 12px rgba(16, 185, 129, 0.4);
 }
 
-.flight-scene.state-crashed .scene-background {
-  animation-play-state: paused;
-  filter: brightness(0.4) saturate(0.6);
-}
+.flight-scene.state-crashed .bg-segment { filter: brightness(0.4) saturate(0.6); }
 
-.flight-scene.state-waiting .scene-background,
-.flight-scene.state-countdown .scene-background {
-  animation-duration: 28s;
-  filter: brightness(0.75) saturate(0.9);
-}
+.flight-scene.state-waiting .bg-segment,
+.flight-scene.state-countdown .bg-segment { filter: brightness(0.75) saturate(0.95); }
 
 @media (max-width: 640px) {
   .flight-scene { height: 340px; }

@@ -17,6 +17,7 @@ const LoginForm = () => {
     <div className="login-form">
       <div className="login-container">
         <h2>Unirse al juego Aviator</h2>
+        <p className='login-description'>Disfruta del juego y apuesta con responsabilidad.</p>
         <form onSubmit={handleSubmit}>
           <input
             type="text"

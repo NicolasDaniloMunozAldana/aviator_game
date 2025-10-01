@@ -94,7 +94,7 @@ export const GameProvider = ({ children }) => {
 
         // Actualización del multiplicador en tiempo real
         socket.on('multiplier_update', (data) => {
-            console.log('Multiplicador actualizado:', data.multiplier);
+            // console.log('Multiplicador actualizado:', data.multiplier);
             setGameState(prev => ({
                 ...prev,
                 currentMultiplier: data.multiplier,
