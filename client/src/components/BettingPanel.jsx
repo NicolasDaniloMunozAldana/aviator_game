@@ -12,15 +12,15 @@ const BettingPanel = () => {
   const hasActiveBet = !!myBet || player.hasBet;
   const hasCashedOut = myBet?.hasCashedOut || player.hasCashedOut;
 
-  const canBet = connected && 
-                (gameState.currentState === 'waiting' || gameState.currentState === 'countdown') &&
-                !hasActiveBet &&
-                !isPlacingBet;
-  
-  const canCashOut = connected && 
-                    gameState.currentState === 'in_progress' && 
-                    hasActiveBet && 
-                    !hasCashedOut;
+  const canBet = connected &&
+    (gameState.currentState === 'waiting' || gameState.currentState === 'countdown') &&
+    !hasActiveBet &&
+    !isPlacingBet;
+
+  const canCashOut = connected &&
+    gameState.currentState === 'in_progress' &&
+    hasActiveBet &&
+    !hasCashedOut;
 
   const handleBet = async () => {
     if (!connected) {
@@ -35,7 +35,7 @@ const BettingPanel = () => {
       alert('La apuesta mínima es $1');
       return;
     }
-    
+
     setIsPlacingBet(true);
     try {
       await placeBet(betAmount);
@@ -79,7 +79,7 @@ const BettingPanel = () => {
         <div className="player-details">
           <h3>{player.username}</h3>
           <div className="balance">
-            <span>Saldo: </span>
+            <span>| Saldo: </span>
             <strong>${player.balance.toFixed(2)}</strong>
           </div>
         </div>
@@ -103,16 +103,22 @@ const BettingPanel = () => {
 
         <div className="quick-bets">
           <span className="quick-label">Apuestas rápidas:</span>
-          {quickBets.map(amount => (
-            <button
-              key={amount}
-              className={`quick-bet-btn ${betAmount === amount ? 'selected' : ''}`}
-              onClick={() => setBetAmount(amount)}
-              disabled={hasActiveBet || gameState.currentState === 'in_progress'}
-            >
-              ${amount}
-            </button>
-          ))}
+          <div className="quick-bets-buttons">
+            {quickBets.map(amount => (
+              <button
+                key={amount}
+                className={`quick-bet-btn ${betAmount === amount ? 'selected' : ''} ${betAmount > player.balance ? 'disabled' : ''} ${amount == 100 ? 'bigger-button' : ''}`}
+                onClick={() => {
+                  if (amount <= player.balance) {
+                    setBetAmount(amount);
+                  } else { alert('Saldo insuficiente'); }
+                }}
+                disabled={hasActiveBet || gameState.currentState === 'in_progress'}
+              >
+                ${amount}
+              </button>
+            ))}
+          </div>
         </div>
 
         {!hasActiveBet ? (
