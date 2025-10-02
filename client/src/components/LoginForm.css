@@ -2,7 +2,7 @@
     display: flex;
     justify-content: center;
     align-items: center;
-    min-height: 80vh;
+    height: 100vh;
     padding: 20px;
     background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
 }
@@ -21,9 +21,15 @@
 
 .login-container h2 {
     font-size: 2rem;
-    margin-bottom: 30px;
-    color: #4cc9f0;
+    color: #95e2fa;
     font-weight: 600;
+}
+
+.login-container .login-description {
+    margin-bottom: 20px;
+    margin-top: 10px;
+    color: rgba(255, 255, 255, 0.8);
+    font-size: 0.9rem;
 }
 
 .login-container form {
@@ -40,6 +46,7 @@
     color: white;
     font-size: 1rem;
     border: 2px solid transparent;
+    text-align: center;
     transition: all 0.3s ease;
 }
 
@@ -70,7 +77,7 @@
 }
 
 .login-container button:hover {
-    transform: translateY(-2px);
+    transform: translateY(-1px);
     box-shadow: 0 10px 20px rgba(76, 201, 240, 0.4);
     background: linear-gradient(135deg, #3aa8d4, #4cc9f0);
 }

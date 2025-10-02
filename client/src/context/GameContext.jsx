@@ -117,6 +117,18 @@ export const GameProvider = ({ children }) => {
                 ...state
             }));
 
+            // Sincronizar datos del jugador local con la lista de jugadores del servidor
+            if (state.players && socket.id) {
+                const serverPlayer = state.players.find(p => p.id === socket.id);
+                if (serverPlayer) {
+                    setPlayer(prev => ({
+                        ...prev,
+                        balance: serverPlayer.balance,
+                        username: serverPlayer.username || prev.username
+                    }));
+                }
+            }
+
             // Actualizar si tengo apuesta activa
             if (state.activeBets && socket.id) {
                 const myBet = state.activeBets.find(bet => bet.playerId === socket.id);
@@ -141,7 +153,7 @@ export const GameProvider = ({ children }) => {
 
         // Actualización del multiplicador en tiempo real
         socket.on('multiplier_update', (data) => {
-            console.log('Multiplicador actualizado:', data.multiplier);
+            // console.log('Multiplicador actualizado:', data.multiplier);
             setGameState(prev => ({
                 ...prev,
                 currentMultiplier: data.multiplier,
