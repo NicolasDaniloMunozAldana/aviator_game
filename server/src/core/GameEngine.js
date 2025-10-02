@@ -80,9 +80,6 @@ export class GameEngine extends EventEmitter {
     startMultiplierPhase() {
         this.gameState.currentState = GAME_STATES.IN_PROGRESS;
         this.crashMultiplier.reset();
-        
-        // Marcar inicio de la ronda para tracking de BD
-        this.gameState.startNewRound();
 
         this.multiplierInterval = setInterval(async () => {
             const updateResult = this.crashMultiplier.update();

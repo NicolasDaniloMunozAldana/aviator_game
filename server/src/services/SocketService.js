@@ -271,20 +271,6 @@ export class SocketService {
                     this.forwardToLeader('player_leave', { socketId: socket.id });
                 }
             });
-
-            // Eventos adicionales para estadísticas de jugador
-            socket.on('get_player_stats', async () => {
-                const player = authService.getPlayerBySocket(socket.id);
-                if (player) {
-                    try {
-                        const stats = await authService.getPlayerStats(player.id);
-                        socket.emit('player_stats', stats);
-                    } catch (error) {
-                        console.error('Error obteniendo estadísticas:', error);
-                        socket.emit('player_stats', { error: 'Error obteniendo estadísticas' });
-                    }
-                }
-            });
         });
     }
 

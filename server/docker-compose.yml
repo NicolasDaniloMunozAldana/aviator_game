@@ -17,6 +17,13 @@ services:
       - REDIS_URL=redis://redis:6379
       - IS_LEADER=true
       - NAME=backend1
+      - DB_HOST=host.docker.internal
+      - DB_PORT=15432
+      - DB_NAME=aviator_game
+      - DB_USER=postgres
+      - DB_PASSWORD=postgres123
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
     depends_on:
       - redis
     networks:
@@ -30,6 +37,13 @@ services:
       - PORT=3000
       - REDIS_URL=redis://redis:6379
       - NAME=backend2
+      - DB_HOST=host.docker.internal
+      - DB_PORT=15432
+      - DB_NAME=aviator_game
+      - DB_USER=postgres
+      - DB_PASSWORD=postgres123
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
     depends_on:
       - redis
     networks:
@@ -43,6 +57,13 @@ services:
       - PORT=3000
       - REDIS_URL=redis://redis:6379
       - NAME=backend3
+      - DB_HOST=host.docker.internal
+      - DB_PORT=15432
+      - DB_NAME=aviator_game
+      - DB_USER=postgres
+      - DB_PASSWORD=postgres123
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
     depends_on:
       - redis
     networks:

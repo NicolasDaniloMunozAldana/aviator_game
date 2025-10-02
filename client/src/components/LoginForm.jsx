@@ -55,10 +55,6 @@ const LoginForm = () => {
           <div className="user-info">
             <h3>{player.username}</h3>
             <p className="balance">Saldo actual: <strong>${player.balance?.toFixed(2)}</strong></p>
-            <p className="stats">
-              Partidas jugadas: {player.gamesPlayed || 0}<br/>
-              Ganancias totales: ${(player.totalWinnings || 0).toFixed(2)}
-            </p>
           </div>
           <div className="login-actions">
             <button 

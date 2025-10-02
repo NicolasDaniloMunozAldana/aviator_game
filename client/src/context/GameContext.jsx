@@ -356,12 +356,6 @@ export const GameProvider = ({ children }) => {
         socket.emit('cash_out');
     };
 
-    // Obtener estadísticas del jugador
-    const getPlayerStats = () => {
-        if (!socket || !player.isAuthenticated) return;
-        socket.emit('get_player_stats');
-    };
-
     const value = {
         gameState,
         player,
@@ -373,8 +367,7 @@ export const GameProvider = ({ children }) => {
         authenticateUser,
         logout,
         placeBet,
-        cashOut,
-        getPlayerStats
+        cashOut
     };
 
     return (

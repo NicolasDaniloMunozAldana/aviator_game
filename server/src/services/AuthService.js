@@ -1,4 +1,3 @@
-import { v4 as uuidv4 } from 'uuid';
 import crypto from 'crypto';
 import databaseService from './DatabaseService.js';
 import { Player } from '../models/Player.js';
@@ -10,9 +9,8 @@ export class AuthService {
 
     // Generar token único para el usuario
     generateUserToken() {
-        // Crear un token único que será guardado en localStorage
         const timestamp = Date.now().toString(36);
-        const randomPart = crypto.randomBytes(16).toString('hex');
+        const randomPart = crypto.randomBytes(8).toString('hex');
         return `aviator_${timestamp}_${randomPart}`;
     }
 
@@ -26,7 +24,7 @@ export class AuthService {
                 const playerData = await databaseService.getPlayerByToken(userToken);
                 if (playerData) {
                     player = new Player(playerData);
-                    console.log(`Usuario existente autenticado: ${player.username} (${player.id})`);
+                    console.log(`✅ Usuario existente autenticado: ${player.username}`);
                     return {
                         success: true,
                         player: player,
@@ -34,16 +32,26 @@ export class AuthService {
                         isNewUser: false
                     };
                 } else {
-                    console.log('Token no válido o expirado, creando nuevo usuario');
+                    console.log('⚠️ Token no válido, creando nuevo usuario');
                 }
             }
 
             // Usuario nuevo o token inválido - crear nuevo jugador
             const newUserToken = this.generateUserToken();
             const playerData = await databaseService.createPlayer(username, newUserToken);
-            player = new Player(playerData);
+            
+            if (playerData) {
+                player = new Player(playerData);
+            } else {
+                // Si falla la BD, crear jugador en memoria
+                player = new Player({
+                    userToken: newUserToken,
+                    username: username,
+                    balance: 1000
+                });
+            }
 
-            console.log(`Nuevo usuario creado: ${player.username} (${player.id})`);
+            console.log(`✅ Nuevo usuario creado: ${player.username}`);
 
             return {
                 success: true,
@@ -53,7 +61,7 @@ export class AuthService {
             };
 
         } catch (error) {
-            console.error('Error en autenticación:', error);
+            console.error('❌ Error en autenticación:', error);
             return {
                 success: false,
                 error: 'Error del servidor durante la autenticación'
@@ -64,7 +72,7 @@ export class AuthService {
     // Asociar jugador con sesión de socket
     associateSocketWithPlayer(socketId, player) {
         this.activeSessions.set(socketId, player);
-        console.log(`Socket ${socketId} asociado con jugador ${player.username}`);
+        console.log(`🔗 Socket ${socketId} asociado con jugador ${player.username}`);
     }
 
     // Obtener jugador por socket ID
@@ -77,7 +85,7 @@ export class AuthService {
         const player = this.activeSessions.get(socketId);
         if (player) {
             this.activeSessions.delete(socketId);
-            console.log(`Sesión removida para socket ${socketId} (${player.username})`);
+            console.log(`🔓 Sesión removida para socket ${socketId} (${player.username})`);
         }
         return player;
     }
@@ -87,23 +95,27 @@ export class AuthService {
         return Array.from(this.activeSessions.values());
     }
 
-    // Actualizar balance del jugador en la sesión activa
-    async updatePlayerBalance(playerId, newBalance) {
+    // Actualizar balance del jugador
+    async updatePlayerBalance(userToken, newBalance) {
         try {
             // Actualizar en base de datos
-            const updatedPlayer = await databaseService.updatePlayerBalance(playerId, newBalance);
+            const updatedPlayer = await databaseService.updatePlayerBalance(userToken, newBalance);
             
             // Actualizar en sesiones activas
             for (const [socketId, player] of this.activeSessions.entries()) {
-                if (player.id === playerId) {
+                if (player.userToken === userToken) {
                     player.balance = newBalance;
                     break;
                 }
             }
 
-            return new Player(updatedPlayer);
+            if (updatedPlayer) {
+                return new Player(updatedPlayer);
+            }
+            
+            return null;
         } catch (error) {
-            console.error('Error actualizando balance del jugador:', error);
+            console.error('❌ Error actualizando balance del jugador:', error);
             throw error;
         }
     }
@@ -131,28 +143,6 @@ export class AuthService {
         }
 
         return { valid: true };
-    }
-
-    // Obtener estadísticas del jugador
-    async getPlayerStats(playerId) {
-        try {
-            const playerData = await databaseService.getPlayerByToken(playerId);
-            if (!playerData) {
-                return null;
-            }
-
-            const player = new Player(playerData);
-            const recentBets = await databaseService.getPlayerBets(playerId, 10);
-            
-            return {
-                player: player.toJSON(),
-                stats: player.getStats(),
-                recentBets: recentBets
-            };
-        } catch (error) {
-            console.error('Error obteniendo estadísticas del jugador:', error);
-            throw error;
-        }
     }
 }
 
